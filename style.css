@@ -1,4 +1,13 @@
-body{font-family: Verdana, Arial, Helvetica, sans-serif;background-color:#B6C7F0;margin:0;padding:0;color:#000;}
+body{font-family: Verdana, Arial, Helvetica, sans-serif;background-color:#FFF3BA;margin:0;padding:0;color:#000;}
+.table_header{font-size:48px}
+.main_table{height:100%;background-color:white}
+.month_table{background-color:#9FB9F6}
+.month_table_header{text-decoration:bold;border-top-style:double}
+.dinner{border-style:double}
+.event{background-color:#FFF3BA}
+.menu1{background-color:#9FB9F6}
+
+
 html,body{margin:0;padding:0;height:100%;border:none;}
 .input{color:#5f91c4;height:12px;width:80px;font-size:11px;}
 .input2{color:#5f91c4;width:80px;font-size:13px;}
@@ -12,13 +21,7 @@ html,body{margin:0;padding:0;height:100%;border:none;}
 .menu a:hover{text-decoration:underline;}
 .menulinks a:hover{text-decoration:underline;}
 form{margin:0;}
-.table_header{font-size:48px}
-.main_table{height:100%;background-color:white}
-.month_table{background-color:#6490F3}
-.month_table_header{text-decoration:bold;border-top-style:double}
-.dinner{border-style:double}
-.event{background-color:#9FB9F6}
-.menu1{background-color:#9FB9F6}
+
 /* CSS - Cascading Style Sheet */
 /* Palette color codes */
 /* Palette URL: http://paletton.com/#uid=13L0u0kllllaFw0g0qFqFg0w0aF */
