@@ -5,7 +5,7 @@ include("login.php");
 function draw_calendar($month,$year,$number){
 
    $i=0;
-   $sql = "select month,day,2016-year,first_name,show_age from date join person on date.date_id=person.birthday_id order by month,day";
+   $sql = "select month,day,year,first_name,show_age from date join person on date.date_id=person.birthday_id order by month,day";
    $data = mysql_query($sql);
    while (list($mnth[$i],$day[$i],$age[$i],$name[$i],$show_age[$i])=mysql_fetch_row($data)) {
       $i++;
@@ -20,8 +20,12 @@ function draw_calendar($month,$year,$number){
       $thismonth=$month+$i;
       if ($thismonth>12)
       {
-         $thismonth=1;
-         $year++;
+         if ($thismonth==13)
+         {
+            $year++;
+            $j=0;
+         }
+         $thismonth-=12;
       }
       $calendar.= '<tr><td colspan="7" align="center" class="month_table_header">'.date('F',mktime(0,0,0,$thismonth,1,$year)).' '.	$year.'</td></tr><tr>';
 
@@ -49,6 +53,7 @@ function draw_calendar($month,$year,$number){
          if ($day[$j]==$list_day&&$thismonth==$mnth[$j])
          {
             $age_visible="";
+            $age[$j]=$year-$age[$j];
             if ($show_age[$j])
             {
                $age_visible="(".$age[$j].")";
@@ -57,6 +62,7 @@ function draw_calendar($month,$year,$number){
             $calendar.= $name[$j++].$age_visible."<br>";
             while ($day[$j]==$list_day) {
                $age_visible="";
+               $age[$j]=$year-$age[$j];
                if ($show_age[$j])
                {
                   $age_visible="(".$age[$j].")";
@@ -108,6 +114,6 @@ function draw_calendar($month,$year,$number){
 }
 
 /* sample usages */
-echo draw_calendar(1,2016,12);
+echo draw_calendar(4,2016,4);
 
 ?>
