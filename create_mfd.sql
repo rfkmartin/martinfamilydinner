@@ -53,6 +53,15 @@ create table event (
    foreign key (date_id) references date(date_id)
 );
 
+create table user (
+   user_id int not null auto_increment,
+   username varchar(64) not null,
+   passcode varchar(255) not null,
+   family_id int not null,
+   primary key (user_id),
+   foreign key (family_id) references family(family_id)
+);
+
 -- Sarah
 insert into address(address_id,line1,line2,city,state,zip) values (1,"1181 Ivy Hill Drive","","Mendota Heights", "MN", "55118");
 -- Kevin
@@ -78,31 +87,6 @@ insert into address(address_id,line1,line2,city,state,zip) values (11,"22 Inner 
 -- Adie
 insert into address(address_id,line1,line2,city,state,zip) values (12,"1300 Wittman Park Lane","","Menasha", "WI", "54952");
 
--- Sarah
-insert into family(family_id,name,address_id,phone,anniversary_id) values (1,"Arendt(Mendota Hts)",1,NULL,NULL);
--- Kevin
-insert into family(family_id,name,address_id,phone,anniversary_id) values (2,"Arendt(St. Paul)",2,NULL,NULL);
--- Corry
-insert into family(family_id,name,address_id,phone,anniversary_id) values (3,"Corry",3,NULL,NULL);
--- Eide
-insert into family(family_id,name,address_id,phone,anniversary_id) values (4,"Eide",4,NULL,NULL);
--- Sarah
-insert into family(family_id,name,address_id,phone,anniversary_id) values (5,"Galbari",5,NULL,NULL);
--- Kevin
-insert into family(family_id,name,address_id,phone,anniversary_id) values (6,"Martin(St. Clair)",6,NULL,NULL);
--- Corry
-insert into family(family_id,name,address_id,phone,anniversary_id) values (7,"Martinopolous",7,NULL,NULL);
--- Eide
-insert into family(family_id,name,address_id,phone,anniversary_id) values (8,"Martin(Jefferson)",8,NULL,NULL);
--- Sarah
-insert into family(family_id,name,address_id,phone,anniversary_id) values (9,"Martin(Eagan)",9,NULL,NULL);
--- Kevin
-insert into family(family_id,name,address_id,phone,anniversary_id) values (10,"Sheppard",10,NULL,NULL);
--- Corry
-insert into family(family_id,name,address_id,phone,anniversary_id) values (11,"Martin(Mo)",11,NULL,NULL);
--- Eide
-insert into family(family_id,name,address_id,phone,anniversary_id) values (12,"Martin(WI)",12,NULL,NULL);
-
 insert into date(date_id,day,month,year) values (1,26,12,1947); -- Sarah
 insert into date(date_id,day,month,year) values (2,14,2,1973); -- Kevin
 insert into date(date_id,day,month,year) values (3,26,3,1900); -- Megan
@@ -127,6 +111,32 @@ insert into date(date_id,day,month,year) values (21,11,3,1944); -- Adie
 insert into date(date_id,day,month,year) values (22,15,7,2010); -- Stevie
 insert into date(date_id,day,month,year) values (23,18,7,2013); -- Bobby
 insert into date(date_id,day,month,year) values (24,18,7,2013); -- Teddy
+insert into date(date_id,day,month,year) values (25,19,5,2007); -- Martinopoulos
+
+-- Sarah
+insert into family(family_id,name,address_id,phone,anniversary_id) values (1,"Arendt(Mendota Hts)",1,NULL,NULL);
+-- Kevin
+insert into family(family_id,name,address_id,phone,anniversary_id) values (2,"Arendt(St. Paul)",2,NULL,NULL);
+-- Corry
+insert into family(family_id,name,address_id,phone,anniversary_id) values (3,"Corry",3,NULL,NULL);
+-- Eide
+insert into family(family_id,name,address_id,phone,anniversary_id) values (4,"Eide",4,NULL,NULL);
+-- Sarah
+insert into family(family_id,name,address_id,phone,anniversary_id) values (5,"Galbari",5,NULL,NULL);
+-- Kevin
+insert into family(family_id,name,address_id,phone,anniversary_id) values (6,"Martin(St. Clair)",6,NULL,NULL);
+-- Corry
+insert into family(family_id,name,address_id,phone,anniversary_id) values (7,"Martinopolous",7,"952.848.2310",25);
+-- Eide
+insert into family(family_id,name,address_id,phone,anniversary_id) values (8,"Martin(Jefferson)",8,NULL,NULL);
+-- Sarah
+insert into family(family_id,name,address_id,phone,anniversary_id) values (9,"Martin(Eagan)",9,NULL,NULL);
+-- Kevin
+insert into family(family_id,name,address_id,phone,anniversary_id) values (10,"Sheppard",10,NULL,NULL);
+-- Corry
+insert into family(family_id,name,address_id,phone,anniversary_id) values (11,"Martin(Mo)",11,NULL,NULL);
+-- Eide
+insert into family(family_id,name,address_id,phone,anniversary_id) values (12,"Martin(WI)",12,NULL,NULL);
 
 insert into person(person_id,first_name,last_name,family_id,birthday_id,show_age) values (1,"Sarah","Arendt",1,1,true);
 insert into person(person_id,first_name,last_name,family_id,birthday_id,show_age) values (2,"Kevin","Arendt",2,2,true);
@@ -153,3 +163,4 @@ insert into person(person_id,first_name,last_name,family_id,birthday_id,show_age
 insert into person(person_id,first_name,last_name,family_id,birthday_id,show_age) values (23,"Teddy","Martin",7,23,true);
 insert into person(person_id,first_name,last_name,family_id,birthday_id,show_age) values (24,"Bobby","Martin",7,24,true);
 
+insert into user(user_id,username,passcode,family_id) values (1,"rfkmartin@gmail.com","$2y$10$PH2Oebi7uTmTA/yssOvZyeH1hO/8Tvb/zji08snvnHFU0pUnzgBOS",7);
