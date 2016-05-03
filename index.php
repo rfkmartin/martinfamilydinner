@@ -6,17 +6,8 @@ print "<link href=\"/martinfamilydinner/style.css\" rel=\"stylesheet\" type=\"te
 print "</head>\n";
 
 require_once("login.php");
-include("month1.php");
-$link = mysqli_connect($db_host,$db_user,$db_pwd);
-if (!$link)
-{
-   die("Can't connect to database");
-}
-
-if (!mysqli_select_db($link,$database))
-{
-   die("Can't select database");
-}
+include("month.php");
+date_default_timezone_set("America/Chicago");
 
 print "<body>\n";
 print "<table width=\"1080\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" id=\"main_table\" class=\"main_table\">\n";
@@ -44,7 +35,7 @@ print "    <tr><td>Martinopoulos</td><td>veggie tray</td></tr></table>\n";
 print "    </td>\n";
 print "    <td>\n";
 
-echo draw_calendar(4,2016,4);
+echo draw_calendar($link,4,2016,4);
 
 print "</td></tr></table>\n";
 print "</body>\n";

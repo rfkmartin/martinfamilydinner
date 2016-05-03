@@ -1,14 +1,14 @@
 <?php
 
 /* draws a calendar */
-function draw_calendar($month,$year,$number){
+function draw_calendar($link,$month,$year,$number){
 
    $i=0;
    // mysql> (select month,day,year,'a' as type,name as xtra1,'' as xtra2 from date join family on date.date_id=family.anniversary_id) union (select month,day,year,'b' as type,first_name as xtra1,show_age as xtra2 from date join person on date.date_id=person.birthday_id) order by month,day;
 
    $sql = "select month,day,year,first_name,show_age from date join person on date.date_id=person.birthday_id order by month,day";
-   $data = mysql_query($sql);
-   while (list($mnth[$i],$day[$i],$age[$i],$name[$i],$show_age[$i])=mysql_fetch_row($data)) {
+   $data = mysqli_query($link,$sql);
+   while (list($mnth[$i],$day[$i],$age[$i],$name[$i],$show_age[$i])=mysqli_fetch_row($data)) {
       $i++;
    }
    $j=0;

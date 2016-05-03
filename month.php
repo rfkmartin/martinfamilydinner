@@ -1,64 +1,112 @@
 <?php
 
-//https://davidwalsh.name/php-calendar
-
 /* draws a calendar */
-function draw_calendar($month,$year){
+function draw_calendar($link,$month,$year,$number){
 
+   $i=0;
+   // mysql> (select month,day,year,'a' as type,name as xtra1,'' as xtra2 from date join family on date.date_id=family.anniversary_id) union (select month,day,year,'b' as type,first_name as xtra1,show_age as xtra2 from date join person on date.date_id=person.birthday_id) order by month,day;
+
+   $sql = "select month,day,year,first_name,show_age from date join person on date.date_id=person.birthday_id order by month,day";
+   $data = mysqli_query($link,$sql);
+   while (list($mnth[$i],$day[$i],$age[$i],$name[$i],$show_age[$i])=mysqli_fetch_row($data)) {
+      $i++;
+   }
+   $j=0;
+   while ($mnth[$j]<$month) $j++;
 	/* draw table */
-	$calendar = '<table cellpadding="0" cellspacing="0" class="calendar">';
+	$calendar = '<table cellpadding="0" cellspacing="0" class="month_table">';
 
-	/* table headings */
-	$headings = array('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday');
-	$calendar.= '<tr class="calendar-row"><td class="calendar-day-head">'.implode('</td><td class="calendar-day-head">',$headings).'</td></tr>';
+   for ($i=0;$i<$number;$i++)
+   {
+      $thismonth=$month+$i;
+      if ($thismonth>12)
+      {
+         if ($thismonth==13)
+         {
+            $year++;
+            $j=0;
+         }
+         $thismonth-=12;
+      }
+      $calendar.= '<tr><td colspan="7" align="center" class="month_table_header">'.date('F',mktime(0,0,0,$thismonth,1,$year)).' '.	$year.'</td></tr><tr>';
 
-	/* days and weeks vars now ... */
-	$running_day = date('w',mktime(0,0,0,$month,1,$year));
-	$days_in_month = date('t',mktime(0,0,0,$month,1,$year));
-	$days_in_this_week = 1;
-	$day_counter = 0;
-	$dates_array = array();
+      /* days and weeks vars now ... */
+      $running_day = date('w',mktime(0,0,0,$thismonth,1,$year));
+      $days_in_month = date('t',mktime(0,0,0,$thismonth,1,$year));
+      $days_in_this_week = 1;
+      $day_counter = 0;
+      $dates_array = array();
 
-	/* row for week one */
-	$calendar.= '<tr class="calendar-row">';
+      /* print "blank" days until the first of the current week */
+      for($x = 0; $x < $running_day; $x++)
+      {
+         $calendar.= '<td width="30px" align="center"></td>';
+         $days_in_this_week++;
+      }
 
-	/* print "blank" days until the first of the current week */
-	for($x = 0; $x < $running_day; $x++):
-		$calendar.= '<td class="calendar-day-np"> </td>';
-		$days_in_this_week++;
-	endfor;
-
-	/* keep going with days.... */
-	for($list_day = 1; $list_day <= $days_in_month; $list_day++):
-		$calendar.= '<td class="calendar-day">';
-			/* add in the day number */
-			$calendar.= '<div class="day-number">'.$list_day.'</div>';
+      /* keep going with days.... */
+      for($list_day = 1; $list_day <= $days_in_month; $list_day++)
+      {
+         $calendar.= '<td width="30px" align="center"';
+         /* add in the day number */
+         //while ($day[$i]<$list_day) $i++;
+         //<td width="30px" align="center" class="event"><div class="eventdata">5<span class="eventdatatext">Kate(40)<br>John(46)<br>Sarah(3)</span></div></td>
+         if ($day[$j]==$list_day&&$thismonth==$mnth[$j])
+         {
+            $age_visible="";
+            $age[$j]=$year-$age[$j];
+            if ($show_age[$j])
+            {
+               $age_visible="(".$age[$j].")";
+            }
+            $calendar.=" class='event'><div class='eventdata'>".$list_day."<span class='eventdatatext'>";
+            $calendar.= $name[$j++].$age_visible."<br>";
+            while ($day[$j]==$list_day) {
+               $age_visible="";
+               $age[$j]=$year-$age[$j];
+               if ($show_age[$j])
+               {
+                  $age_visible="(".$age[$j].")";
+               }
+               $calendar.= $name[$j++].$age_visible."<br>";
+            }
+            $calendar.="</span></div>";
+         }
+         else
+         {
+            $calendar.= ">".$list_day;
+         }
 
 			/** QUERY THE DATABASE FOR AN ENTRY FOR THIS DAY !!  IF MATCHES FOUND, PRINT THEM !! **/
-			$calendar.= str_repeat('<p> </p>',2);
+                  // select month,day,2016-year,first_name from date join person on date.date_id=person.birthday_id order by month,day;
+			//$calendar.= str_repeat('<p> </p>',2);
 
-		$calendar.= '</td>';
-		if($running_day == 6):
-			$calendar.= '</tr>';
-			if(($day_counter+1) != $days_in_month):
-				$calendar.= '<tr class="calendar-row">';
-			endif;
-			$running_day = -1;
-			$days_in_this_week = 0;
-		endif;
-		$days_in_this_week++; $running_day++; $day_counter++;
-	endfor;
+         $calendar.= '</td>';
+         if($running_day == 6)
+         {
+            $calendar.= '</tr>';
+            if(($day_counter+1) != $days_in_month)
+            {
+               $calendar.= '<tr>';
+            }
+            $running_day = -1;
+            $days_in_this_week = 0;
+         }
+         $days_in_this_week++; $running_day++; $day_counter++;
+      }
 
-	/* finish the rest of the days in the week */
-	if($days_in_this_week < 8):
-		for($x = 1; $x <= (8 - $days_in_this_week); $x++):
-			$calendar.= '<td class="calendar-day-np"> </td>';
-		endfor;
-	endif;
+      /* finish the rest of the days in the week */
+      if($days_in_this_week < 8)
+      {
+         for($x = 1; $x <= (8 - $days_in_this_week); $x++)
+         {
+            $calendar.= '<td width="30px" align="center"></td>';
+         }
+      }
 
-	/* final row */
-	$calendar.= '</tr>';
-
+      /* final row */
+      $calendar.= '</tr>';
+   }
 	/* end the table */
 	$calendar.= '</table>';
 
@@ -67,9 +115,6 @@ function draw_calendar($month,$year){
 }
 
 /* sample usages */
-echo '<h2>July 2009</h2>';
-echo draw_calendar(7,2009);
+//echo draw_calendar(4,2016,4);
 
-echo '<h2>August 2009</h2>';
-echo draw_calendar(8,2009);
 ?>
