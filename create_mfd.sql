@@ -17,6 +17,8 @@ create table address (
    city varchar(32),
    state varchar(2),
    zip varchar(16),
+   gmap_link varchar(64),
+   gmap_embed varchar(256),
    primary key (address_id)
 );
 
@@ -48,6 +50,7 @@ create table event (
    event_id int not null auto_increment,
    date_id int not null,
    family_id int not null,
+   start_time varchar(4),
    primary key (event_id),
    foreign key (family_id) references family(family_id),
    foreign key (date_id) references date(date_id)
@@ -75,7 +78,7 @@ insert into address(address_id,line1,line2,city,state,zip) values (5,"648 Superi
 -- Martin
 insert into address(address_id,line1,line2,city,state,zip) values (6,"1170 St. Clair Ave.","","St. Paul", "MN", "55105");
 -- Martin(orono)
-insert into address(address_id,line1,line2,city,state,zip) values (7,"2695 Pheasant Rd","","Orono", "MN", "55331");
+insert into address(address_id,line1,line2,city,state,zip,gmap_link,gmap_embed) values (7,"2695 Pheasant Rd","","Orono", "MN", "55331","https://goo.gl/maps/1vDoRby74AB2","<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2824.7069014204376!2d-93.6041456846077!3d44.92929567699617!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x87f60295fd981ca1%3A0xd36b49eb96b36018!2s2695+Pheasant+Rd%2C+Excelsior%2C+MN+55331!5e0!3m2!1sen!2sus!4v1462386611825\" width=\"600\" height=\"450\" frameborder=\"0\" style=\"border:0\" allowfullscreen></iframe>");
 -- Martin(Jefferson)
 insert into address(address_id,line1,line2,city,state,zip) values (8,"1881 Jefferson Ave.","","St. Paul", "MN", "55105");
 -- Dave Martin
@@ -112,6 +115,7 @@ insert into date(date_id,day,month,year) values (22,15,7,2010); -- Stevie
 insert into date(date_id,day,month,year) values (23,18,7,2013); -- Bobby
 insert into date(date_id,day,month,year) values (24,18,7,2013); -- Teddy
 insert into date(date_id,day,month,year) values (25,19,5,2007); -- Martinopoulos
+insert into date(date_id,day,month,year) values (26,29,5,2016); -- Martinopoulos 5/16 dinner
 
 -- Sarah
 insert into family(family_id,name,address_id,phone,anniversary_id) values (1,"Arendt(Mendota Hts)",1,NULL,NULL);
@@ -164,3 +168,5 @@ insert into person(person_id,first_name,last_name,family_id,birthday_id,show_age
 insert into person(person_id,first_name,last_name,family_id,birthday_id,show_age) values (24,"Bobby","Martin",7,24,true);
 
 insert into user(user_id,username,passcode,family_id) values (1,"rfkmartin@gmail.com","$2y$10$PH2Oebi7uTmTA/yssOvZyeH1hO/8Tvb/zji08snvnHFU0pUnzgBOS",7);
+
+insert into event(event_id,date_id,family_id) values (1,26,7);
