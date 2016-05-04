@@ -6,9 +6,13 @@ function draw_calendar($link,$month,$year,$number){
    $i=0;
    // mysql> (select month,day,year,'a' as type,name as xtra1,'' as xtra2 from date join family on date.date_id=family.anniversary_id) union (select month,day,year,'b' as type,first_name as xtra1,show_age as xtra2 from date join person on date.date_id=person.birthday_id) order by month,day;
 
-   $sql = "select month,day,year,first_name,show_age from date join person on date.date_id=person.birthday_id order by month,day";
+   //           bday    anniv    event
+   // xtra1     name    name     family
+   // xtra2     showage NULL
+   $sql = "(select month,day,year,'a' as type,name as xtra1,'' as xtra2 from date join family on date.date_id=family.anniversary_id) union (select month,day,year,'b' as type,first_name as xtra1,show_age as xtra2 from date join person on date.date_id=person.birthday_id) order by month,day,year,type";
+   //select month,day,year,first_name,show_age from date join person on date.date_id=person.birthday_id order by month,day";
    $data = mysqli_query($link,$sql);
-   while (list($mnth[$i],$day[$i],$age[$i],$name[$i],$show_age[$i])=mysqli_fetch_row($data)) {
+   while (list($mnth[$i],$dy[$i],$yr[$i],$type[$i],$xtra1[$i],$xtra2[$i])=mysqli_fetch_row($data)) {
       $i++;
    }
    $j=0;
@@ -51,24 +55,44 @@ function draw_calendar($link,$month,$year,$number){
          /* add in the day number */
          //while ($day[$i]<$list_day) $i++;
          //<td width="30px" align="center" class="event"><div class="eventdata">5<span class="eventdatatext">Kate(40)<br>John(46)<br>Sarah(3)</span></div></td>
-         if ($day[$j]==$list_day&&$thismonth==$mnth[$j])
+         if ($dy[$j]==$list_day&&$thismonth==$mnth[$j])
          {
-            $age_visible="";
-            $age[$j]=$year-$age[$j];
-            if ($show_age[$j])
-            {
-               $age_visible="(".$age[$j].")";
-            }
             $calendar.=" class='event'><div class='eventdata'>".$list_day."<span class='eventdatatext'>";
-            $calendar.= $name[$j++].$age_visible."<br>";
-            while ($day[$j]==$list_day) {
+            if ($type[$j]=="a")
+            {
+               $age[$j]=$year-$yr[$j];
+               $age_visible="(".$age[$j].")";
+               $calendar.=$xtra1[$j].$age_visible."<br>";
+            }
+            if ($type[$j]=="b")
+            {
                $age_visible="";
-               $age[$j]=$year-$age[$j];
-               if ($show_age[$j])
+               $age[$j]=$year-$yr[$j];
+               if ($xtra2[$j])
                {
                   $age_visible="(".$age[$j].")";
                }
-               $calendar.= $name[$j++].$age_visible."<br>";
+               $calendar.= $xtra1[$j].$age_visible."<br>";
+            }
+            $j++;
+            while ($dy[$j]==$list_day) {
+               if ($type[$j]=="a")
+               {
+                  $age[$j]=$year-$yr[$j];
+                  $age_visible="(".$age[$j].")";
+                  $calendar.=$xtra1[$j].$age_visible."<br>";
+               }
+               if ($type[$j]=="b")
+               {
+                  $age_visible="";
+                  $age[$j]=$year-$yr[$j];
+                  if ($xtra2[$j])
+                  {
+                     $age_visible="(".$age[$j].")";
+                  }
+                  $calendar.= $xtra1[$j].$age_visible."<br>";
+               }
+               $j++;
             }
             $calendar.="</span></div>";
          }
@@ -76,10 +100,6 @@ function draw_calendar($link,$month,$year,$number){
          {
             $calendar.= ">".$list_day;
          }
-
-			/** QUERY THE DATABASE FOR AN ENTRY FOR THIS DAY !!  IF MATCHES FOUND, PRINT THEM !! **/
-                  // select month,day,2016-year,first_name from date join person on date.date_id=person.birthday_id order by month,day;
-			//$calendar.= str_repeat('<p> </p>',2);
 
          $calendar.= '</td>';
          if($running_day == 6)
@@ -113,8 +133,6 @@ function draw_calendar($link,$month,$year,$number){
 	/* all done, return result */
 	return $calendar;
 }
-
-/* sample usages */
-//echo draw_calendar(4,2016,4);
-
+//require_once("login.php");
+//echo draw_calendar($link,4,2016,4);
 ?>

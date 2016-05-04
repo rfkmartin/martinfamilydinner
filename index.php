@@ -25,15 +25,17 @@ print "        <tr><td colspan=\"2\" class=\"menu1\">Home | Families | Events</t
 print "      </table>\n";
 print "    </td></tr>\n";
 print "    <tr><td width=\"81%\" valign=\"top\" align=\"center\"><h2>April 2016</h2>\n";
-print "    <table border=\"1\"><tr><td width=\"25%\">Hosting:</td><td>Corry Family (map)</td></tr></table>\n";
+print "    <table border=\"1\"><tr><td width=\"25%\">Hosting:</td><td>Corry Family (<a href=\"https://goo.gl/maps/1vDoRby74AB2\">map</a>)</td></tr></table>\n";
 print "    <table border=\"1\"><tr><td width=\"25%\">Attending:</td><td>Jefferson Martin</td></tr>\n";
 print "    <tr><td></td><td>Patrick</td></tr>\n";
 print "    <tr><td></td><td>Rebecca</td></tr></table>\n";
 print "    <table border=\"1\"><tr><td width=\"25%\">Dishes:</td><td></td></tr>\n";
 print "    <tr><td>Jefferson Martin</td><td>red wine</td></tr>\n";
 print "    <tr><td>Martinopoulos</td><td>veggie tray</td></tr></table>\n";
+print "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2824.7069014204376!2d-93.6041456846077!3d44.92929567699617!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x87f60295fd981ca1%3A0xd36b49eb96b36018!2s2695+Pheasant+Rd%2C+Excelsior%2C+MN+55331!5e0!3m2!1sen!2sus!4v1462386611825\" width=\"600\" height=\"450\" frameborder=\"0\" style=\"border:0\" allowfullscreen></iframe>";
 print "    </td>\n";
 print "    <td>\n";
+
 
 echo draw_calendar($link,4,2016,4);
 
