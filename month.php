@@ -9,7 +9,7 @@ function draw_calendar($link,$month,$year,$number){
    //           bday    anniv    event
    // xtra1     name    name     family
    // xtra2     showage NULL
-   $sql = "(select month,day,year,'a' as type,name as xtra1,'' as xtra2 from date join family on date.date_id=family.anniversary_id) union (select month,day,year,'b' as type,first_name as xtra1,show_age as xtra2 from date join person on date.date_id=person.birthday_id) order by month,day,year,type";
+   $sql = "(select month,day,year,'a' as type,name as xtra1,'' as xtra2 from date join family on date.date_id=family.anniversary_id) union (select month,day,year,'b' as type,first_name as xtra1,show_age as xtra2 from date join person on date.date_id=person.birthday_id) union (select month,day,year,'e' as type,name as xtra1,'' as xtra2 from date join event on event.date_id=date.date_id join family on event.family_id=family.family_id) order by month,day,year,type";
    //select month,day,year,first_name,show_age from date join person on date.date_id=person.birthday_id order by month,day";
    $data = mysqli_query($link,$sql);
    while (list($mnth[$i],$dy[$i],$yr[$i],$type[$i],$xtra1[$i],$xtra2[$i])=mysqli_fetch_row($data)) {
@@ -57,15 +57,27 @@ function draw_calendar($link,$month,$year,$number){
          //<td width="30px" align="center" class="event"><div class="eventdata">5<span class="eventdatatext">Kate(40)<br>John(46)<br>Sarah(3)</span></div></td>
          if ($dy[$j]==$list_day&&$thismonth==$mnth[$j])
          {
-            $calendar.=" class='event'><div class='eventdata'>".$list_day."<span class='eventdatatext'>";
+            $event="";
+            if ($type[$j]=="e")
+            {
+               $event=" dinner";
+            }
+            $calendar.=" class='event".$event."'><div class='eventdata'>".$list_day."<span class='eventdatatext'>";
+            if ($type[$j]=="e")
+            {
+               $calendar.="<b>Dinner</b><br>";
+               $calendar.=$xtra1[$j]."<br>";
+            }
             if ($type[$j]=="a")
             {
+               $calendar.="<b>Anniversaries</b><br>";
                $age[$j]=$year-$yr[$j];
                $age_visible="(".$age[$j].")";
                $calendar.=$xtra1[$j].$age_visible."<br>";
             }
             if ($type[$j]=="b")
             {
+               $calendar.="<b>Birthdays</b><br>";
                $age_visible="";
                $age[$j]=$year-$yr[$j];
                if ($xtra2[$j])
