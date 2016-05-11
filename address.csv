@@ -1,0 +1,13 @@
+address_id,line1,line2,city,state,zip,gmap_link,gmap_embed
+1,'1181 Ivy Hill Drive','','Mendota Heights', 'MN', '55118',,
+2,'78 10th St. E #2810','','St. Paul', 'MN', '55101',,
+3,'8086 Somerset Knolls','','Woodbury', 'MN', '55125',,
+4,'13875 Shannon Parkway','','Rosemount', 'MN', '55068',,
+5,'648 Superior Court','','Eagan', 'MN', '55123',,
+6,'1170 St. Clair Ave.','','St. Paul', 'MN', '55105',,
+7,'2695 Pheasant Rd','','Orono', 'MN', '55331','https://goo.gl/maps/1vDoRby74AB2','<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2824.7069014204376!2d-93.6041456846077!3d44.92929567699617!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x87f60295fd981ca1%3A0xd36b49eb96b36018!2s2695+Pheasant+Rd%2C+Excelsior%2C+MN+55331!5e0!3m2!1sen!2sus!4v1462386611825" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>'
+8,'1881 Jefferson Ave.','','St. Paul', 'MN', '55105',,
+9,'1685 Boardwalk','','Eagan', 'MN', '55122',,
+10,'3579 Lemieux Cir.','','Eagan', 'MN', '55122',,
+11,'22 Inner Drive','Apt. M24','St. Paul', 'MN', '55116',,
+12,'1300 Wittman Park Lane','','Menasha', 'WI', '54952',,
