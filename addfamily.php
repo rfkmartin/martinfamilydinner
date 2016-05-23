@@ -29,8 +29,15 @@ print "    <tr><td width=\"81%\" valign=\"top\" align=\"center\">\n";
 
 if (isset($_POST['addnew']))
 {
-   echo $_POST['familyname'];
-   echo $_POST['city'];
+   $name = $_POST['familyname'];
+   $phone =  $_POST['phone'];
+   //$sql = "insert into family (name,phone) values (\"".$name."\",\"".$phone."\");";
+   $sql = "insert into family (name,phone) values (\"".$name."\",\"".$phone."\");";
+   echo $sql;
+   if (mysqli_query($link,$sql))
+   {
+      echo "good";
+   }
 }
 
 print "    <form action = \"\" method = \"post\">\n";
@@ -44,8 +51,8 @@ print "    <tr><td>Phone:</td><td><input type=\"text\" name=\"phone\"></td></tr>
 print "    <tr><td>Anniversary:</td><td><input type=\"text\" name=\"anniv\"></td></tr>\n";
 print "    <tr><td colspan=\"2\" align=\"center\"><input type=\"submit\" name=\"addnew\" value=\"Add New\"></td></tr></table>\n";
 print "    </form>\n";
-print "    </td>\n";
 echo family_table($link);
+print "    </td>\n";
 print "    <td>\n";
 
 echo draw_calendar($link,4,2016,6);

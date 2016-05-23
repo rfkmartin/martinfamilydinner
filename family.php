@@ -19,11 +19,11 @@ function family_table($link){
       $calendar.='<td>'.$phone[$x].'</td>';
       if (empty($day[$x]))
       {
-         $calendar.='<td>&nbsp;</td></tr>';
+         $calendar.='<td></td></tr>';
       }
       else
       {
-         $calendar.='<td>'.$month[$x].'/'.$day[$x].'/'.$year[$x].'</tr></td>';
+         $calendar.='<td>'.$month[$x].'/'.$day[$x].'/'.$year[$x].'</td></tr>';
       }
    }
    $calendar.='</table>';
