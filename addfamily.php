@@ -36,8 +36,13 @@ if (isset($_POST['addnew']))
    echo $sql;
    if (mysqli_query($link,$sql))
    {
-      echo "good";
+      $id = mysqli_insert_id($link);
+      echo "good family id: ".$id;
    }
+   $annivY = date('Y', strtotime($_POST['anniv']));
+   $annivm = date('m', strtotime($_POST['anniv']));
+   $annivd = date('d', strtotime($_POST['anniv']));
+   echo ' XXX '.$annivY.' XXX '.$annivm.' XXX '.$annivd;
 }
 
 print "    <form action = \"\" method = \"post\">\n";
@@ -48,10 +53,14 @@ print "    <tr><td>City:</td><td><input type=\"text\" name=\"city\"></td></tr>\n
 print "    <tr><td>State:</td><td><input type=\"text\" name=\"state\"></td></tr>\n";
 print "    <tr><td>ZIP:</td><td><input type=\"text\" name=\"zip\"></td></tr>\n";
 print "    <tr><td>Phone:</td><td><input type=\"text\" name=\"phone\"></td></tr>\n";
-print "    <tr><td>Anniversary:</td><td><input type=\"text\" name=\"anniv\"></td></tr>\n";
+print "    <tr><td>Anniversary:</td><td><input type=\"date\" name=\"anniv\"></td></tr>\n";
 print "    <tr><td colspan=\"2\" align=\"center\"><input type=\"submit\" name=\"addnew\" value=\"Add New\"></td></tr></table>\n";
 print "    </form>\n";
 echo family_table($link);
+echo "<br><br>";
+echo familymem_table($link);
+echo "<br><br>";
+echo family_ddl($link);
 print "    </td>\n";
 print "    <td>\n";
 
