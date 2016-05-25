@@ -10,6 +10,9 @@ include("month.php");
 include("family.php");
 date_default_timezone_set("America/Chicago");
 
+//http://www.xlinesoft.com/phprunner/docs/phprunner_session_variables.htm
+//http://stackoverflow.com/questions/21954384/changing-a-php-session-value-by-clicking-on-a-div
+
 print "<body>\n";
 print "<table width=\"1080\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" id=\"main_table\" class=\"main_table\">\n";
 print "  <tr>\n";

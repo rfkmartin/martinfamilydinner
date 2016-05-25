@@ -70,15 +70,14 @@ function family_ddl($link){
 
    $sql = "select family_id,name from family";
    $data = mysqli_query($link,$sql);
-
-   foreach($data as $row)
+   while(list($family_id,$name) = mysqli_fetch_row($data))
    {
-      echo '<option value="'.$row['family_id'].'"';
-      if ($row['family_id']==7)
+      echo '<option value="'.$family_id.'"';
+      if ($family_id==7)
       {
          echo ' selected';
       }
-      echo '>'.$row['name'].'</option>'."\n";
+      echo '>'.$name.'</option>'."\n";
    }
    echo '</select></form>';
 }
