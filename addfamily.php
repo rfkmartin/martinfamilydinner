@@ -26,7 +26,7 @@ print "        <tr><td valign=\"bottom\" class=\"table_header\"><img src=\"Marti
 print "        <td valign=\"top\">Welcome, <span class=\"person\">Martinopoulos Family</span><br>\n";
 print "        Account<br>\n";
 print "        Logout<br></td></tr>\n";
-print "        <tr><td colspan=\"2\" class=\"menu1\">Home | Families | Events</td></tr>\n";
+print "        <tr><td colspan=\"2\" class=\"menu1\">Home | My Family | RSVP | Address Book</td></tr>\n";
 print "      </table>\n";
 print "    </td></tr>\n";
 print "    <tr><td width=\"81%\" valign=\"top\" align=\"center\">\n";
@@ -34,23 +34,87 @@ print "    <tr><td width=\"81%\" valign=\"top\" align=\"center\">\n";
 if (isset($_POST['addnew']))
 {
    $name = $_POST['familyname'];
+   $line1 = $_POST['line1'];
+   $line2 = $_POST['line2'];
+   $city = $_POST['city'];
+   $state = $_POST['state'];
+   $zip = $_POST['zip'];
    $phone =  $_POST['phone'];
-   //$sql = "insert into family (name,phone) values (\"".$name."\",\"".$phone."\");";
-   $sql = "insert into family (name,phone) values (\"".$name."\",\"".$phone."\");";
-   echo $sql;
-   if (mysqli_query($link,$sql))
-   {
-      $id = mysqli_insert_id($link);
-      echo "good family id: ".$id;
-   }
+   $anniv = $_POST['anniv'];
    $annivY = date('Y', strtotime($_POST['anniv']));
    $annivm = date('m', strtotime($_POST['anniv']));
    $annivd = date('d', strtotime($_POST['anniv']));
-   echo ' XXX '.$annivY.' XXX '.$annivm.' XXX '.$annivd;
+   // insert address
+   $sql = "insert into address(line1,line2,city,state,zip) values (\"".$line1."\",\"".$line2."\",\"".$city."\",\"".$state."\",\"".$zip."\");";
+   if (mysqli_query($link,$sql))
+   {
+      $address_id = mysqli_insert_id($link);
+   }
+   // insert anniversary
+   $sql = "insert into date(day,month,year) values (\"".$annivd."\",\"".$annivm."\",\"".$annivY."\");";
+   if (mysqli_query($link,$sql))
+   {
+      $anniv_id = mysqli_insert_id($link);
+   }
+   //$sql = "insert into family (name,phone) values (\"".$name."\",\"".$phone."\");";
+   $sql = "insert into family (name,phone,anniversary_id,address_id) values (\"".$name."\",\"".$phone."\",\"".$anniv_id."\",\"".$address_id."\");";
+   echo $sql;
+   if (mysqli_query($link,$sql))
+   {
+      $selected_family = mysqli_insert_id($link);
+   }
+}
+if (isset($_POST['update']))
+{
+   $selected_family=$_POST['family_id'];
+   $sql = "select address_id,anniversary_id from family where family_id=".$selected_family;
+   $data = mysqli_query($link,$sql);
+   list($address_id,$anniversary_id)=mysqli_fetch_row($data);
+   if (empty($address_id))
+   {
+      $sql = "insert into address(line1,line2,city,state,zip) values ('".$_POST['line1']."','".$_POST['line2']."','".$_POST['city']."', '".$_POST['state']."', '".$_POST['zip']."')";
+      if (mysqli_query($link,$sql))
+      {
+         $address_id = mysqli_insert_id($link);
+      }
+   }
+   else
+   {
+      $sql = "update address set line1='".$_POST['line1']."',line2='".$_POST['line2']."',city='".$_POST['city']."',state='".$_POST['state']."',zip='".$_POST['zip']."' where address_id=".$address_id."";
+      if (!mysqli_query($link,$sql))
+      {
+         echo "Error updating record: " . mysqli_error($link);
+      }
+   }
+
+   $annivY = date('Y', strtotime($_POST['anniv']));
+   $annivm = date('m', strtotime($_POST['anniv']));
+   $annivd = date('d', strtotime($_POST['anniv']));
+   if (empty($anniversary_id))
+   {
+      $sql = "insert into date(day,month,year) values ('".$annivd."','".$annivm."','".$annivY."')";
+      if (mysqli_query($link,$sql))
+      {
+         $anniversary_id = mysqli_insert_id($link);
+      }
+   }
+   else
+   {
+      $sql = "update date set day='".$annivd."',month='".$annivm."',year='".$annivY."' where address_id=".$address_id."";
+      if (!mysqli_query($link,$sql))
+      {
+         echo "Error updating record: " . mysqli_error($link);
+      }
+   }
+   $sql = "update family set name='".$_POST['familyname']."',address_id='".$address_id."',anniversary_id='".$anniversary_id."',phone='".$_POST['phone']."' where family_id=".$selected_family."";
+   echo $sql;
+   if (!mysqli_query($link,$sql))
+   {
+      echo "Error updating record: " . mysqli_error($link);
+   }
 }
 if (isset($_POST['change']))
 {
-   echo $_POST['family'];
    $selected_family=$_POST['family'];
 }
 
@@ -62,7 +126,7 @@ echo family_table($link);
 echo "<br><br>";
 echo familymem_table($link,$selected_family);
 print "    </td>\n";
-print "    <td>\n";
+print "    <td valign=\"top\">\n";
 
 echo draw_calendar($link,4,2016,6);
 
