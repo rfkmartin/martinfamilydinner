@@ -107,7 +107,6 @@ if (isset($_POST['update']))
       }
    }
    $sql = "update family set name='".$_POST['familyname']."',address_id='".$address_id."',anniversary_id='".$anniversary_id."',phone='".$_POST['phone']."' where family_id=".$selected_family."";
-   echo $sql;
    if (!mysqli_query($link,$sql))
    {
       echo "Error updating record: " . mysqli_error($link);
