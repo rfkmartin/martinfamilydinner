@@ -9,6 +9,7 @@ require_once("login.php");
 include("month.php");
 include("family.php");
 date_default_timezone_set("America/Chicago");
+session_start();
 
 //http://www.xlinesoft.com/phprunner/docs/phprunner_session_variables.htm
 //http://stackoverflow.com/questions/21954384/changing-a-php-session-value-by-clicking-on-a-div
@@ -47,23 +48,19 @@ if (isset($_POST['addnew']))
    $annivd = date('d', strtotime($_POST['anniv']));
    echo ' XXX '.$annivY.' XXX '.$annivm.' XXX '.$annivd;
 }
+if (isset($_POST['change']))
+{
+   echo $_POST['family'];
+   $selected_family=$_POST['family'];
+}
 
-print "    <form action = \"\" method = \"post\">\n";
-print "    <table border='1'><tr><td>Family Name:</td><td><input type=\"text\" name=\"familyname\"></td></tr>\n";
-print "    <tr><td>Address Line 1:</td><td><input type=\"text\" name=\"address1\"></td></tr>\n";
-print "    <tr><td>Address Line 2:</td><td><input type=\"text\" name=\"address2\"></td></tr>\n";
-print "    <tr><td>City:</td><td><input type=\"text\" name=\"city\"></td></tr>\n";
-print "    <tr><td>State:</td><td><input type=\"text\" name=\"state\"></td></tr>\n";
-print "    <tr><td>ZIP:</td><td><input type=\"text\" name=\"zip\"></td></tr>\n";
-print "    <tr><td>Phone:</td><td><input type=\"text\" name=\"phone\"></td></tr>\n";
-print "    <tr><td>Anniversary:</td><td><input type=\"date\" name=\"anniv\"></td></tr>\n";
-print "    <tr><td colspan=\"2\" align=\"center\"><input type=\"submit\" name=\"addnew\" value=\"Add New\"></td></tr></table>\n";
-print "    </form>\n";
+echo family_ddl($link,$selected_family);
+echo "<br><br>";
+echo family_addnew($link,$selected_family);
+echo "<br><br>";
 echo family_table($link);
 echo "<br><br>";
-echo familymem_table($link);
-echo "<br><br>";
-echo family_ddl($link);
+echo familymem_table($link,$selected_family);
 print "    </td>\n";
 print "    <td>\n";
 
