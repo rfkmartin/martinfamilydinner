@@ -46,23 +46,44 @@ if (isset($_POST['addnew']))
    $annivd = date('d', strtotime($_POST['anniv']));
    // insert address
    $sql = "insert into address(line1,line2,city,state,zip) values (\"".$line1."\",\"".$line2."\",\"".$city."\",\"".$state."\",\"".$zip."\");";
-   if (mysqli_query($link,$sql))
+   if (!empty($_POST['city']))
    {
-      $address_id = mysqli_insert_id($link);
+      if (mysqli_query($link,$sql))
+      {
+         $address_id = mysqli_insert_id($link);
+      }
    }
-   // insert anniversary
-   $sql = "insert into date(day,month,year) values (\"".$annivd."\",\"".$annivm."\",\"".$annivY."\");";
-   if (mysqli_query($link,$sql))
+   else
    {
-      $anniv_id = mysqli_insert_id($link);
+      $address_id="NULL";
    }
-   //$sql = "insert into family (name,phone) values (\"".$name."\",\"".$phone."\");";
-   $sql = "insert into family (name,phone,anniversary_id,address_id) values (\"".$name."\",\"".$phone."\",\"".$anniv_id."\",\"".$address_id."\");";
+   if (!empty($_POST['anniv']))
+   {
+      // insert anniversary
+      $sql = "insert into date(day,month,year) values (\"".$annivd."\",\"".$annivm."\",\"".$annivY."\");";
+      if (mysqli_query($link,$sql))
+      {
+         $anniv_id = mysqli_insert_id($link);
+      }
+   }
+   else
+   {
+      $anniv_id="NULL";
+   }
+   $sql = "insert into family (name,phone,anniversary_id,address_id) values (\"".$name."\",\"".$phone."\",".$anniv_id.",".$address_id.");";
    echo $sql;
    if (mysqli_query($link,$sql))
    {
       $selected_family = mysqli_insert_id($link);
    }
+   else
+   {
+         echo "Error inserting record: " . mysqli_error($link);
+   }
+}
+if (isset($_POST['delete']))
+{
+   echo $_POST['family_id'];
 }
 if (isset($_POST['update']))
 {
@@ -93,20 +114,33 @@ if (isset($_POST['update']))
    if (empty($anniversary_id))
    {
       $sql = "insert into date(day,month,year) values ('".$annivd."','".$annivm."','".$annivY."')";
-      if (mysqli_query($link,$sql))
+      if (!empty($_POST['anniv']))
       {
-         $anniversary_id = mysqli_insert_id($link);
+         if (mysqli_query($link,$sql))
+         {
+            $anniversary_id = mysqli_insert_id($link);
+         }
       }
    }
    else
    {
-      $sql = "update date set day='".$annivd."',month='".$annivm."',year='".$annivY."' where address_id=".$address_id."";
+      $sql = "update date set day='".$annivd."',month='".$annivm."',year='".$annivY."' where date_id=".$anniversary_id."";
+      echo $sql;
       if (!mysqli_query($link,$sql))
       {
          echo "Error updating record: " . mysqli_error($link);
       }
    }
-   $sql = "update family set name='".$_POST['familyname']."',address_id='".$address_id."',anniversary_id='".$anniversary_id."',phone='".$_POST['phone']."' where family_id=".$selected_family."";
+   if (!empty($address_id))
+   {
+      $add_address=",address_id='".$address_id."'";
+   }
+   if (!empty($address_id))
+   {
+      $add_anniv=",anniversary_id='".$anniversary_id."'";
+   }
+   $sql = "update family set name='".$_POST['familyname']."'".$add_address.$add_anniversary.",phone='".$_POST['phone']."' where family_id=".$selected_family."";
+   echo $sql;
    if (!mysqli_query($link,$sql))
    {
       echo "Error updating record: " . mysqli_error($link);
