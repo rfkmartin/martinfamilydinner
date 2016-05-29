@@ -1,5 +1,4 @@
 <?php
-
 /* print table of familes */
 function family_table($link){
 
@@ -46,8 +45,7 @@ function family_table($link){
 	return $calendar;
 }
 
-
-/* print table of familes */
+/* print table of family members */
 function familymem_table($link,$selected){
 
    $i=0;
@@ -79,7 +77,7 @@ function familymem_table($link,$selected){
 	return $calendar;
 }
 
-/* print table of familes */
+/* print dropdown list of familes */
 function family_ddl($link,$selected){
    echo '<form action = "" method = "post"><select name="family">';
 
@@ -98,7 +96,7 @@ function family_ddl($link,$selected){
    echo '</select><input type="submit" name="change" value="Change Family"></form>';
 }
 
-/* print form for new families */
+/* print form to add/edit families */
 function family_addnew($link,$selected){
    echo '<form action = "" method = "post">';
 
@@ -114,8 +112,15 @@ function family_addnew($link,$selected){
       echo '<tr><td>State:</td><td><input type="text" name="state" value="'.$state.'"></td></tr>';
       echo '<tr><td>ZIP:</td><td><input type="text" name="zip" value="'.$zip.'"></td></tr>';
       echo '<tr><td>Phone:</td><td><input type="text" name="phone" value="'.$phone.'"></td></tr>';
-      echo '<tr><td>Anniversary:</td><td><input type="date" name="anniv" value="'.$year.'-'.sprintf('%02d',$month).'-'.sprintf('%02d',$day).'"></td></tr>';
-      echo '<tr><td colspan="2" align="center"><input type="submit" name="update" value="Update"></td></tr></table>';
+      if (empty($year))
+      {
+         echo '<tr><td>Anniversary:</td><td><input type="date" name="anniv" value=""></td></tr>';
+      }
+      else
+      {
+         echo '<tr><td>Anniversary:</td><td><input type="date" name="anniv" value="'.$year.'-'.sprintf('%02d',$month).'-'.sprintf('%02d',$day).'"></td></tr>';
+      }
+      echo '<tr><td colspan="2" align="center"><input type="submit" name="updatefamily" value="Update"></td></tr></table>';
    }
    else
    {
@@ -127,42 +132,42 @@ function family_addnew($link,$selected){
       echo '<tr><td>ZIP:</td><td><input type="text" name="zip"></td></tr>';
       echo '<tr><td>Phone:</td><td><input type="text" name="phone"></td></tr>';
       echo '<tr><td>Anniversary:</td><td><input type="date" name="anniv"></td></tr>';
-      echo '<tr><td colspan="2" align="center"><input type="submit" name="addnew" value="Add New"></td></tr></table>';
+      echo '<tr><td colspan="2" align="center"><input type="submit" name="addfamily" value="Add New"></td></tr></table>';
    }
    echo '</form>';
 }
 
-/* print form for new families */
+/* print form to add/edit members */
 function member_addnew($link,$selected){
-   echo '<form action = "" method = "post">';
 
    if ($selected>=0)
    {
-      $sql = "select family_id,name,line1,line2,city,state,zip,phone,day,month,year from family join address on family.address_id=address.address_id left join date on family.anniversary_id=date.date_id where family_id=".$selected;
+      $sql = "select person_id,first_name,last_name,show_age,day,month,year from person left join date on person.birthday_id=date.date_id where family_id=".$selected;
       $data = mysqli_query($link,$sql);
-      list($family_id,$name,$line1,$line2,$city,$state,$zip,$phone,$day,$month,$year) = mysqli_fetch_row($data);
-      echo '<table border="1"<tr><td>First Name:</td><td><input type="text" name="familyname" value="'.$name.'"><input type="hidden" name="family_id" value="'.$selected.'"></td></tr>';
-      echo '<tr><td>Address Line 1:</td><td><input type="text" name="line1" value="'.$line1.'"></td></tr>';
-      echo '<tr><td>Address Line 2:</td><td><input type="text" name="line2" value="'.$line2.'"></td></tr>';
-      echo '<tr><td>City:</td><td><input type="text" name="city" value="'.$city.'"></td></tr>';
-      echo '<tr><td>State:</td><td><input type="text" name="state" value="'.$state.'"></td></tr>';
-      echo '<tr><td>ZIP:</td><td><input type="text" name="zip" value="'.$zip.'"></td></tr>';
-      echo '<tr><td>Phone:</td><td><input type="text" name="phone" value="'.$phone.'"></td></tr>';
-      echo '<tr><td>Anniversary:</td><td><input type="date" name="anniv" value="'.$year.'-'.sprintf('%02d',$month).'-'.sprintf('%02d',$day).'"></td></tr>';
-      echo '<tr><td colspan="2" align="center"><input type="submit" name="update" value="Update"></td></tr></table>';
+      echo '<table border="1"<tr><td>First Name</td><td>Last Name</td><td>Show Age?</td><td>Birthdate</td><td></td></tr>';
+      while(list($id,$first,$last,$show,$day,$month,$year) = mysqli_fetch_row($data))
+      {
+         if ($show==1)
+         {
+            $show_age=' checked';
+         }
+         echo '<form action = "" method = "post">';
+         echo '<td><input type="text" name="first" value="'.$first.'"></td>';
+         echo '<td><input type="text" name="last" value="'.$last.'"></td>';
+         echo '<td><input type="checkbox" name="show"'.$show_age.'></td>';
+         //echo '<td><input type="checkbox" name="show" value="Show Age?"'.$show_age.'></td>';
+         echo '<td><input type="date" name="bday" value="'.$year.'-'.sprintf('%02d',$month).'-'.sprintf('%02d',$day).'"></td>';
+         echo '<td><input type="submit" name="editmem" value="Edit"><input type="hidden" name="family_id" value="'.$selected.'"><input type="hidden" name="person_id" value="'.$id.'"></td></tr>';
+         echo '</form>';
+      }
+         echo '<form action = "" method = "post">';
+         echo '<td><input type="text" name="first"></td>';
+         echo '<td><input type="text" name="last"></td>';
+         echo '<td><input type="checkbox" name="show"></td>';
+         echo '<td><input type="date" name="bday"></td>';
+         echo '<td><input type="submit" name="editmem" value="Add New"><input type="hidden" name="family_id" value="'.$selected.'"></td></tr>';
+         echo '</form>';
+         echo '</table>';
    }
-   else
-   {
-      echo '<table border="1"<tr><td>Family Name:</td><td><input type="text" name="familyname"></td></tr>';
-      echo '<tr><td>Address Line 1:</td><td><input type="text" name="line1"></td></tr>';
-      echo '<tr><td>Address Line 2:</td><td><input type="text" name="line2"></td></tr>';
-      echo '<tr><td>City:</td><td><input type="text" name="city"></td></tr>';
-      echo '<tr><td>State:</td><td><input type="text" name="state"></td></tr>';
-      echo '<tr><td>ZIP:</td><td><input type="text" name="zip"></td></tr>';
-      echo '<tr><td>Phone:</td><td><input type="text" name="phone"></td></tr>';
-      echo '<tr><td>Anniversary:</td><td><input type="date" name="anniv"></td></tr>';
-      echo '<tr><td colspan="2" align="center"><input type="submit" name="addnew" value="Add New"></td></tr></table>';
-   }
-   echo '</form>';
 }
 ?>
