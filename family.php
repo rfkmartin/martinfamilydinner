@@ -114,13 +114,16 @@ function family_addnew($link,$selected){
       echo '<tr><td>Phone:</td><td><input type="text" name="phone" value="'.$phone.'"></td></tr>';
       if (empty($year))
       {
-         echo '<tr><td>Anniversary:</td><td><input type="date" name="anniv" value=""></td></tr>';
+         echo '<tr><td>Anniversary:</td><td><input type="text" id="date" name="anniv" value="" data-format="DD-MM-YYYY" data-template="D MMM YYYY"></td></tr>';
+         //<input name="date_of_birth" value="15-05-1984" data-format="DD-MM-YYYY" data-template="D MMM YYYY">
       }
       else
       {
-         echo '<tr><td>Anniversary:</td><td><input type="date" name="anniv" value="'.$year.'-'.sprintf('%02d',$month).'-'.sprintf('%02d',$day).'"></td></tr>';
+         //echo '<tr><td>Anniversary:</td><td><input type="date" name="anniv" value="'.$year.'-'.sprintf('%02d',$month).'-'.sprintf('%02d',$day).'"></td></tr>';
+         echo '<tr><td>Anniversary:</td><td><input type="text" id="date" name="anniv" data-format="DD-MM-YYYY" data-template="D MMM YYYY" value="'.sprintf('%02d',$day).'-'.sprintf('%02d',$month).'-'.$year.'"></td></tr>';
       }
       echo '<tr><td colspan="2" align="center"><input type="submit" name="updatefamily" value="Update"></td></tr></table>';
+      echo '<script>$(function(){$(\'#date\').combodate();});</script>';
    }
    else
    {
@@ -131,8 +134,10 @@ function family_addnew($link,$selected){
       echo '<tr><td>State:</td><td><input type="text" name="state"></td></tr>';
       echo '<tr><td>ZIP:</td><td><input type="text" name="zip"></td></tr>';
       echo '<tr><td>Phone:</td><td><input type="text" name="phone"></td></tr>';
-      echo '<tr><td>Anniversary:</td><td><input type="date" name="anniv"></td></tr>';
+      //echo '<tr><td>Anniversary:</td><td><input type="date" name="anniv"></td></tr>';
+      echo '<tr><td>Anniversary:</td><td><input type="text" id="date" name="anniv" data-format="DD-MM-YYYY" data-template="D MMM YYYY"></td></tr>';
       echo '<tr><td colspan="2" align="center"><input type="submit" name="addfamily" value="Add New"></td></tr></table>';
+      echo '<script>$(function(){$(\'#date\').combodate();});</script>';
    }
    echo '</form>';
 }
