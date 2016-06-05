@@ -2,6 +2,15 @@ drop database if exists mfd;
 create database mfd;
 use mfd;
 
+create table logger (
+   logger_id int not null auto_increment,
+   msg_dt datetime not null,
+   session_id varchar(32) not null,
+   user_id int not null,
+   message varchar(512) not null,
+   primary key (logger_id)
+);
+
 create table date (
    date_id int not null auto_increment,
    day int not null,
@@ -30,8 +39,8 @@ create table family (
    anniversary_id int,
    primary key (family_id),
    unique (name),
-   foreign key (address_id) references address(address_id),
-   foreign key (anniversary_id) references date(date_id)
+   foreign key (address_id) references address(address_id) on delete cascade,
+   foreign key (anniversary_id) references date(date_id) on delete cascade
 );
 
 create table person (
@@ -42,8 +51,8 @@ create table person (
    birthday_id int,
    show_age bool,
    primary key (person_id),
-   foreign key (family_id) references family(family_id),
-   foreign key (birthday_id) references date(date_id)
+   foreign key (family_id) references family(family_id) on delete cascade,
+   foreign key (birthday_id) references date(date_id) on delete cascade
 );
 
 create table event (
@@ -52,8 +61,8 @@ create table event (
    family_id int not null,
    start_time varchar(4),
    primary key (event_id),
-   foreign key (family_id) references family(family_id),
-   foreign key (date_id) references date(date_id)
+   foreign key (family_id) references family(family_id) on delete cascade,
+   foreign key (date_id) references date(date_id) on delete cascade
 );
 
 create table user (
@@ -62,7 +71,7 @@ create table user (
    passcode varchar(255) not null,
    family_id int not null,
    primary key (user_id),
-   foreign key (family_id) references family(family_id)
+   foreign key (family_id) references family(family_id) on delete cascade
 );
 
 -- Sarah

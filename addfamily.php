@@ -1,4 +1,5 @@
 <?php
+session_start();
 print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n";
 print "<html><head>\n";
 print "<title>Martin Family Dinner</title>\n";
@@ -11,8 +12,8 @@ print "</head>\n";
 require_once("login.php");
 include("month.php");
 include("family.php");
+include("logger.php");
 date_default_timezone_set("America/Chicago");
-session_start();
 
 //http://www.xlinesoft.com/phprunner/docs/phprunner_session_variables.htm
 //http://stackoverflow.com/questions/21954384/changing-a-php-session-value-by-clicking-on-a-div
@@ -34,6 +35,11 @@ print "      </table>\n";
 print "    </td></tr>\n";
 print "    <tr><td width=\"81%\" valign=\"top\" align=\"center\">\n";
 
+$selected_family=-1;
+if (empty($_SESSION['user']))
+{
+   echo 'nobody home<br><br>';
+}
 if (isset($_POST['addfamily']))
 {
    $name = $_POST['familyname'];
@@ -49,6 +55,7 @@ if (isset($_POST['addfamily']))
    $annivd = date('d', strtotime($_POST['anniv']));
    // insert address
    $sql = "insert into address(line1,line2,city,state,zip) values (\"".$line1."\",\"".$line2."\",\"".$city."\",\"".$state."\",\"".$zip."\");";
+   logger($link,SID,1,$sql);
    if (!empty($_POST['city']))
    {
       if (mysqli_query($link,$sql))
@@ -64,6 +71,7 @@ if (isset($_POST['addfamily']))
    {
       // insert anniversary
       $sql = "insert into date(day,month,year) values (\"".$annivd."\",\"".$annivm."\",\"".$annivY."\");";
+      logger($link,SID,1,$sql);
       if (mysqli_query($link,$sql))
       {
          $anniv_id = mysqli_insert_id($link);
@@ -75,6 +83,7 @@ if (isset($_POST['addfamily']))
    }
    $sql = "insert into family (name,phone,anniversary_id,address_id) values (\"".$name."\",\"".$phone."\",".$anniv_id.",".$address_id.");";
    echo $sql;
+   logger($link,SID,1,$sql);
    if (mysqli_query($link,$sql))
    {
       $selected_family = mysqli_insert_id($link);
@@ -217,6 +226,7 @@ if (isset($_POST['updatefamily']))
    if (empty($address_id))
    {
       $sql = "insert into address(line1,line2,city,state,zip) values ('".$_POST['line1']."','".$_POST['line2']."','".$_POST['city']."', '".$_POST['state']."', '".$_POST['zip']."')";
+      logger($link,SID,1,$sql);
       if (mysqli_query($link,$sql))
       {
          $address_id = mysqli_insert_id($link);
@@ -237,6 +247,7 @@ if (isset($_POST['updatefamily']))
    if (empty($anniversary_id))
    {
       $sql = "insert into date(day,month,year) values ('".$annivd."','".$annivm."','".$annivY."')";
+      logger($link,SID,1,$sql);
       if (!empty($_POST['anniv']))
       {
          if (mysqli_query($link,$sql))
