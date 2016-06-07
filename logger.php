@@ -19,11 +19,11 @@ function logger($link,$session,$user,$message)
    }
 
    // Format the date and time
-   $date = date("Y-m-d H:i:s", $time);
+   $date = date("Y-m-d H:i:s", time());
 
    if ($fd = @fopen($OUTFILE, "a"))
    {
-      $result = fputcsv($fd, array($date, $session, $user, $sqlstring));
+      $result = fputcsv($fd, array($date, $session, $user, $message));
       fclose($fd);
    }
    else
