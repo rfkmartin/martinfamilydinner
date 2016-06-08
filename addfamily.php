@@ -62,7 +62,10 @@ if (isset($_POST['addfamily']))
       if (mysqli_query($link,$sql))
       {
          $address_id = mysqli_insert_id($link);
-         logger($link,SID,1,"Error updating record: " . mysqli_error($link));
+      }
+      else
+      {
+         logger($link,SID,1,"Error inserting record: " . mysqli_error($link));
       }
    }
    else
@@ -77,7 +80,10 @@ if (isset($_POST['addfamily']))
       if (mysqli_query($link,$sql))
       {
          $anniv_id = mysqli_insert_id($link);
-         logger($link,SID,1,"Error updating record: " . mysqli_error($link));
+      }
+      else
+      {
+         logger($link,SID,1,"Error inserting record: " . mysqli_error($link));
       }
    }
    else
@@ -93,8 +99,7 @@ if (isset($_POST['addfamily']))
    }
    else
    {
-      echo "Error inserting record: " . mysqli_error($link);
-      logger($link,SID,1,"Error updating record: " . mysqli_error($link));
+      logger($link,SID,1,"Error inserting record: " . mysqli_error($link));
    }
 }
 //~ if (isset($_POST['updatefamily']))
@@ -234,8 +239,10 @@ if (isset($_POST['updatefamily']))
       if (mysqli_query($link,$sql))
       {
          $address_id = mysqli_insert_id($link);
-         logger($link,SID,1,"Error updating record: " . mysqli_error($link));
-
+      }
+      else
+      {
+         logger($link,SID,1,"Error inserting record: " . mysqli_error($link));
       }
    }
    else
@@ -244,7 +251,6 @@ if (isset($_POST['updatefamily']))
       logger($link,SID,1,$sql);
       if (!mysqli_query($link,$sql))
       {
-         echo "Error updating record: " . mysqli_error($link);
          logger($link,SID,1,"Error updating record: " . mysqli_error($link));
       }
    }
@@ -261,7 +267,10 @@ if (isset($_POST['updatefamily']))
          if (mysqli_query($link,$sql))
          {
             $anniversary_id = mysqli_insert_id($link);
-            logger($link,SID,1,"Error updating record: " . mysqli_error($link));
+         }
+         else
+         {
+            logger($link,SID,1,"Error inserting record: " . mysqli_error($link));
          }
       }
    }
@@ -286,9 +295,7 @@ if (isset($_POST['updatefamily']))
    logger($link,SID,1,$sql);
    if (!mysqli_query($link,$sql))
    {
-      echo "Error updating record: " . mysqli_error($link);
       logger($link,SID,1,"Error updating record: " . mysqli_error($link));
-
    }
 }
 if (isset($_POST['change']))
