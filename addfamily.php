@@ -1,6 +1,6 @@
 <?php
 session_start();
-echo '<br /><a href="page2.php?' . SID . '">page 2</a>';
+$SID=session_id();
 print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n";
 print "<html><head>\n";
 print "<title>Martin Family Dinner</title>\n";
@@ -56,7 +56,7 @@ if (isset($_POST['addfamily']))
    $annivd = date('d', strtotime($_POST['anniv']));
    // insert address
    $sql = "insert into address(line1,line2,city,state,zip) values (\"".$line1."\",\"".$line2."\",\"".$city."\",\"".$state."\",\"".$zip."\");";
-   logger($link,SID,1,$sql);
+   logger($link,$SID,1,$sql);
    if (!empty($_POST['city']))
    {
       if (mysqli_query($link,$sql))
@@ -65,7 +65,7 @@ if (isset($_POST['addfamily']))
       }
       else
       {
-         logger($link,SID,1,"Error inserting record: " . mysqli_error($link));
+         logger($link,$SID,1,"Error inserting record: " . mysqli_error($link));
       }
    }
    else
@@ -76,14 +76,14 @@ if (isset($_POST['addfamily']))
    {
       // insert anniversary
       $sql = "insert into date(day,month,year) values (\"".$annivd."\",\"".$annivm."\",\"".$annivY."\");";
-      logger($link,SID,1,$sql);
+      logger($link,$SID,1,$sql);
       if (mysqli_query($link,$sql))
       {
          $anniv_id = mysqli_insert_id($link);
       }
       else
       {
-         logger($link,SID,1,"Error inserting record: " . mysqli_error($link));
+         logger($link,$SID,1,"Error inserting record: " . mysqli_error($link));
       }
    }
    else
@@ -92,14 +92,14 @@ if (isset($_POST['addfamily']))
    }
    $sql = "insert into family (name,phone,anniversary_id,address_id) values (\"".$name."\",\"".$phone."\",".$anniv_id.",".$address_id.");";
    echo $sql;
-   logger($link,SID,1,$sql);
+   logger($link,$SID,1,$sql);
    if (mysqli_query($link,$sql))
    {
       $selected_family = mysqli_insert_id($link);
    }
    else
    {
-      logger($link,SID,1,"Error inserting record: " . mysqli_error($link));
+      logger($link,$SID,1,"Error inserting record: " . mysqli_error($link));
    }
 }
 //~ if (isset($_POST['updatefamily']))
@@ -231,71 +231,76 @@ if (isset($_POST['updatefamily']))
    $selected_family=$_POST['family_id'];
    $sql = "select address_id,anniversary_id from family where family_id=".$selected_family;
    $data = mysqli_query($link,$sql);
+   $add_anniv="";
+   $add_address="";
    list($address_id,$anniversary_id)=mysqli_fetch_row($data);
    if (empty($address_id))
    {
       $sql = "insert into address(line1,line2,city,state,zip) values ('".$_POST['line1']."','".$_POST['line2']."','".$_POST['city']."', '".$_POST['state']."', '".$_POST['zip']."')";
-      logger($link,SID,1,$sql);
+      logger($link,$SID,1,$sql);
       if (mysqli_query($link,$sql))
       {
          $address_id = mysqli_insert_id($link);
       }
       else
       {
-         logger($link,SID,1,"Error inserting record: " . mysqli_error($link));
+         logger($link,$SID,1,"Error inserting record: " . mysqli_error($link));
       }
    }
    else
    {
       $sql = "update address set line1='".$_POST['line1']."',line2='".$_POST['line2']."',city='".$_POST['city']."',state='".$_POST['state']."',zip='".$_POST['zip']."' where address_id=".$address_id."";
-      logger($link,SID,1,$sql);
+      logger($link,$SID,1,$sql);
       if (!mysqli_query($link,$sql))
       {
-         logger($link,SID,1,"Error updating record: " . mysqli_error($link));
+         logger($link,$SID,1,"Error updating record: " . mysqli_error($link));
       }
    }
 
-   $annivY = date('Y', strtotime($_POST['anniv']));
-   $annivm = date('m', strtotime($_POST['anniv']));
-   $annivd = date('d', strtotime($_POST['anniv']));
-   if (empty($anniversary_id))
+   if (!empty($_POST['anniv']))
    {
-      $sql = "insert into date(day,month,year) values ('".$annivd."','".$annivm."','".$annivY."')";
-      logger($link,SID,1,$sql);
-      if (!empty($_POST['anniv']))
+      $annivY = date('Y', strtotime($_POST['anniv']));
+      $annivm = date('m', strtotime($_POST['anniv']));
+      $annivd = date('d', strtotime($_POST['anniv']));
+      if (empty($anniversary_id))
       {
-         if (mysqli_query($link,$sql))
+         $sql = "insert into date(day,month,year) values ('".$annivd."','".$annivm."','".$annivY."')";
+         logger($link,$SID,1,$sql);
+         if (!empty($_POST['anniv']))
          {
-            $anniversary_id = mysqli_insert_id($link);
-         }
-         else
-         {
-            logger($link,SID,1,"Error inserting record: " . mysqli_error($link));
+            if (mysqli_query($link,$sql))
+            {
+               $anniversary_id = mysqli_insert_id($link);
+            }
+            else
+            {
+               logger($link,$SID,1,"Error inserting record: " . mysqli_error($link));
+            }
          }
       }
-   }
-   else
-   {
-      $sql = "update date set day='".$annivd."',month='".$annivm."',year='".$annivY."' where date_id=".$anniversary_id."";
-      logger($link,SID,1,$sql);
-      if (!mysqli_query($link,$sql))
+      else
       {
-         echo "Error updating record: " . mysqli_error($link);
+         $sql = "update date set day='".$annivd."',month='".$annivm."',year='".$annivY."' where date_id=".$anniversary_id."";
+         logger($link,$SID,1,$sql);
+         if (!mysqli_query($link,$sql))
+         {
+            echo "Error updating record: " . mysqli_error($link);
+         }
       }
    }
    if (!empty($address_id))
    {
       $add_address=",address_id='".$address_id."'";
    }
-   if (!empty($address_id))
+   if (!empty($anniversary_id))
    {
       $add_anniv=",anniversary_id='".$anniversary_id."'";
    }
    $sql = "update family set name='".$_POST['familyname']."'".$add_address.$add_anniv.",phone='".$_POST['phone']."' where family_id=".$selected_family."";
-   logger($link,SID,1,$sql);
+   logger($link,$SID,1,$sql);
    if (!mysqli_query($link,$sql))
    {
-      logger($link,SID,1,"Error updating record: " . mysqli_error($link));
+      logger($link,$SID,1,"Error updating record: " . mysqli_error($link));
    }
 }
 if (isset($_POST['change']))
