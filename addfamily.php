@@ -41,6 +41,10 @@ if (empty($_SESSION['user']))
 {
    echo 'nobody home<br><br>';
 }
+if (isset($_POST['delete']))
+{
+   echo 'do i need to delete a family? what about orphaned records?<br><br>';
+}
 if (isset($_POST['addfamily']))
 {
    $name = $_POST['familyname'];
@@ -184,47 +188,71 @@ if (isset($_POST['editmem']))
    // insert or edit bday
    if (empty($member_id))
    {
+      //todo
       echo 'new member';
+      $sql = "insert into date(day,month,year) values ('".$annivd."','".$annivm."','".$annivY."')";
+      logger($link,$SID,1,$sql);
+      if (!empty($_POST['anniv']))
+      {
+         if (mysqli_query($link,$sql))
+         {
+            $anniversary_id = mysqli_insert_id($link);
+         }
+         else
+         {
+            logger($link,$SID,1,"Error inserting record: " . mysqli_error($link));
+         }
+      }
    }
    else
    {
-      echo 'current member';
+      //todo
+      echo "current member";
+      $sql = "update date set day='".$bdayd."',month='".$bdaym."',year='".$bdayY."' where date_id=".$anniversary_id."";
+      logger($link,$SID,1,$sql);
+      if (!mysqli_query($link,$sql))
+      {
+         echo "Error updating record: " . mysqli_error($link);
+      }
    }
-   //~ $sql = "insert into address(line1,line2,city,state,zip) values (\"".$line1."\",\"".$line2."\",\"".$city."\",\"".$state."\",\"".$zip."\");";
-   //~ if (!empty($_POST['city']))
-   //~ {
-      //~ if (mysqli_query($link,$sql))
-      //~ {
-         //~ $address_id = mysqli_insert_id($link);
-      //~ }
-   //~ }
-   //~ else
-   //~ {
-      //~ $address_id="NULL";
-   //~ }
-   //~ if (!empty($_POST['anniv']))
-   //~ {
-      //~ // insert anniversary
-      //~ $sql = "insert into date(day,month,year) values (\"".$annivd."\",\"".$annivm."\",\"".$annivY."\");";
-      //~ if (mysqli_query($link,$sql))
-      //~ {
-         //~ $anniv_id = mysqli_insert_id($link);
-      //~ }
-   //~ }
-   //~ else
-   //~ {
-      //~ $anniv_id="NULL";
-   //~ }
-   //~ $sql = "insert into family (name,phone,anniversary_id,address_id) values (\"".$name."\",\"".$phone."\",".$anniv_id.",".$address_id.");";
-   //~ echo $sql;
-   //~ if (mysqli_query($link,$sql))
-   //~ {
-      //~ $selected_family = mysqli_insert_id($link);
-   //~ }
-   //~ else
-   //~ {
-         //~ echo "Error inserting record: " . mysqli_error($link);
-   //~ }
+   $sql = "insert into address(line1,line2,city,state,zip) values (\"".$line1."\",\"".$line2."\",\"".$city."\",\"".$state."\",\"".$zip."\");";
+   logger($link,$SID,1,$sql);
+   if (!empty($_POST['city']))
+   {
+      if (mysqli_query($link,$sql))
+      {
+         $address_id = mysqli_insert_id($link);
+      }
+   }
+   else
+   {
+      $address_id="NULL";
+   }
+   if (!empty($_POST['anniv']))
+   {
+      // insert anniversary
+      $sql = "insert into date(day,month,year) values (\"".$annivd."\",\"".$annivm."\",\"".$annivY."\");";
+      logger($link,$SID,1,$sql);
+      if (mysqli_query($link,$sql))
+      {
+         $anniv_id = mysqli_insert_id($link);
+      }
+   }
+   else
+   {
+      $anniv_id="NULL";
+   }
+   $sql = "insert into family (name,phone,anniversary_id,address_id) values (\"".$name."\",\"".$phone."\",".$anniv_id.",".$address_id.");";
+   logger($link,$SID,1,$sql);
+   echo $sql;
+   if (mysqli_query($link,$sql))
+   {
+      $selected_family = mysqli_insert_id($link);
+   }
+   else
+   {
+      echo "Error inserting record: " . mysqli_error($link);
+   }
 }
 if (isset($_POST['updatefamily']))
 {

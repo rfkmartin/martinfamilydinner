@@ -147,10 +147,10 @@ function member_addnew($link,$selected){
 
    if ($selected>=0)
    {
-      $sql = "select person_id,first_name,last_name,show_age,day,month,year from person left join date on person.birthday_id=date.date_id where family_id=".$selected;
+      $sql = "select person_id,first_name,last_name,show_age,day,month,year,birthday_id from person left join date on person.birthday_id=date.date_id where family_id=".$selected;
       $data = mysqli_query($link,$sql);
       echo '<table border="1"<tr><td>First Name</td><td>Last Name</td><td>Show Age?</td><td>Birthdate</td><td></td></tr>';
-      while(list($id,$first,$last,$show,$day,$month,$year) = mysqli_fetch_row($data))
+      while(list($id,$first,$last,$show,$day,$month,$year,$bdayid) = mysqli_fetch_row($data))
       {
          if ($show==1)
          {
@@ -162,8 +162,9 @@ function member_addnew($link,$selected){
          echo '<td><input type="checkbox" name="show"'.$show_age.'></td>';
          //echo '<td><input type="checkbox" name="show" value="Show Age?"'.$show_age.'></td>';
          echo '<td><input type="date" name="bday" value="'.$year.'-'.sprintf('%02d',$month).'-'.sprintf('%02d',$day).'"></td>';
-         echo '<td><input type="submit" name="editmem" value="Edit"><input type="hidden" name="family_id" value="'.$selected.'"><input type="hidden" name="person_id" value="'.$id.'"></td></tr>';
-         echo '</form>';
+         echo '<td><input type="submit" name="editmem" value="Edit"><input type="hidden" name="family_id" value="'.$selected.'"><input type="hidden" name="person_id" value="'.$id.'">';
+         echo '<input type="hidden" name="bday_id" value="'.$bdayid.'">';
+         echo '</td></tr></form>';
       }
          echo '<form action = "" method = "post">';
          echo '<td><input type="text" name="first"></td>';
