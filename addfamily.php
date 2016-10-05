@@ -173,85 +173,73 @@ if (isset($_POST['addfamily']))
 //~ }
 if (isset($_POST['editmem']))
 {
-   echo 'in editmem';
+   //echo 'in editmem';
+   print_r($_POST);
    $selected_family = $_POST['family_id'];
    $first = $_POST['first'];
    $last = $_POST['last'];
-   $show = $_POST['show'];
+   (isset($_POST['show']))?$show = $_POST['show']:$show = "off";
    $bday = $_POST['bday'];
+   (isset($_POST['bday_id']))?$bday_id = $_POST['bday_id']:$bday_id = 0;
+   //$bday_id = $_POST['bday_id'];
    $family_id = $_POST['family_id'];
-   $member_id = $_POST['person_id'];
+   (isset($_POST['person_id']))?$member_id = $_POST['person_id']:$member_id = 0;
+   //$member_id = $_POST['person_id'];
    $bdayY = date('Y', strtotime($_POST['bday']));
    $bdaym = date('m', strtotime($_POST['bday']));
    $bdayd = date('d', strtotime($_POST['bday']));
-   echo $first." l ".$last." s ".$show." b ".$bday." f ".$family_id." m ".$member_id." y ".$bdayY." m ".$bdaym." d ".$bdayd;
+   echo $first." l ".$last." s ".$show." b ".$bday." f ".$family_id." m ".$member_id." y ".$bdayY." m ".$bdaym." d ".$bdayd." id ".$bday_id;
+   if ($show=="on")
+   {
+      $show=1;
+   }
+   else
+   {
+      $show=0;
+   }
    // insert or edit bday
-   if (empty($member_id))
+   if ($member_id==0)
    {
       //todo
       echo 'new member';
-      $sql = "insert into date(day,month,year) values ('".$annivd."','".$annivm."','".$annivY."')";
+      $sql = "insert into date(day,month,year) values ('".$bdayd."','".$bdaym."','".$bdayY."')";
       logger($link,$SID,1,$sql);
-      if (!empty($_POST['anniv']))
+      if (mysqli_query($link,$sql))
       {
-         if (mysqli_query($link,$sql))
-         {
-            $anniversary_id = mysqli_insert_id($link);
-         }
-         else
-         {
-            logger($link,$SID,1,"Error inserting record: " . mysqli_error($link));
-         }
+         $bday_id = mysqli_insert_id($link);
+      }
+      else
+      {
+         logger($link,$SID,1,"Error inserting record: " . mysqli_error($link));
+      }
+      $sql = "insert into person(first_name,last_name,family_id,birthday_id,show_age) values ('".$first."','".$last."','".$family_id."','".$bday_id."','".$show."')";
+      logger($link,$SID,1,$sql);
+      if (mysqli_query($link,$sql))
+      {
+         $bday_id = mysqli_insert_id($link);
+      }
+      else
+      {
+         logger($link,$SID,1,"Error inserting record: " . mysqli_error($link));
       }
    }
    else
    {
-      //todo
-      echo "current member";
-      $sql = "update date set day='".$bdayd."',month='".$bdaym."',year='".$bdayY."' where date_id=".$anniversary_id."";
+      //echo "current member";
+      $sql = "update person set first_name='".$first."',last_name='".$last."',show_age='".$show."' where person_id=".$member_id;
       logger($link,$SID,1,$sql);
       if (!mysqli_query($link,$sql))
       {
-         echo "Error updating record: " . mysqli_error($link);
+         logger($link,$SID,1,"Error updating record: " . mysqli_error($link));
+         //echo "Error updating record: " . mysqli_error($link);
       }
-   }
-   $sql = "insert into address(line1,line2,city,state,zip) values (\"".$line1."\",\"".$line2."\",\"".$city."\",\"".$state."\",\"".$zip."\");";
-   logger($link,$SID,1,$sql);
-   if (!empty($_POST['city']))
-   {
-      if (mysqli_query($link,$sql))
-      {
-         $address_id = mysqli_insert_id($link);
-      }
-   }
-   else
-   {
-      $address_id="NULL";
-   }
-   if (!empty($_POST['anniv']))
-   {
-      // insert anniversary
-      $sql = "insert into date(day,month,year) values (\"".$annivd."\",\"".$annivm."\",\"".$annivY."\");";
+      $sql = "update date set day='".$bdayd."',month='".$bdaym."',year='".$bdayY."' where date_id=".$bday_id;
       logger($link,$SID,1,$sql);
-      if (mysqli_query($link,$sql))
+      if (!mysqli_query($link,$sql))
       {
-         $anniv_id = mysqli_insert_id($link);
+         logger($link,$SID,1,"Error updating record: " . mysqli_error($link));
+         //echo "Error updating record: " . mysqli_error($link);
       }
-   }
-   else
-   {
-      $anniv_id="NULL";
-   }
-   $sql = "insert into family (name,phone,anniversary_id,address_id) values (\"".$name."\",\"".$phone."\",".$anniv_id.",".$address_id.");";
-   logger($link,$SID,1,$sql);
-   echo $sql;
-   if (mysqli_query($link,$sql))
-   {
-      $selected_family = mysqli_insert_id($link);
-   }
-   else
-   {
-      echo "Error inserting record: " . mysqli_error($link);
    }
 }
 if (isset($_POST['updatefamily']))

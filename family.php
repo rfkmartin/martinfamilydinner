@@ -152,6 +152,7 @@ function member_addnew($link,$selected){
       echo '<table border="1"<tr><td>First Name</td><td>Last Name</td><td>Show Age?</td><td>Birthdate</td><td></td></tr>';
       while(list($id,$first,$last,$show,$day,$month,$year,$bdayid) = mysqli_fetch_row($data))
       {
+         $show_age="";
          if ($show==1)
          {
             $show_age=' checked';
@@ -162,8 +163,8 @@ function member_addnew($link,$selected){
          echo '<td><input type="checkbox" name="show"'.$show_age.'></td>';
          //echo '<td><input type="checkbox" name="show" value="Show Age?"'.$show_age.'></td>';
          echo '<td><input type="date" name="bday" value="'.$year.'-'.sprintf('%02d',$month).'-'.sprintf('%02d',$day).'"></td>';
-         echo '<td><input type="submit" name="editmem" value="Edit"><input type="hidden" name="family_id" value="'.$selected.'"><input type="hidden" name="person_id" value="'.$id.'">';
-         echo '<input type="hidden" name="bday_id" value="'.$bdayid.'">';
+         echo '<td><input type="hidden" name="bday_id" value="'.$bdayid.'"><input type="hidden" name="family_id" value="'.$selected.'"><input type="hidden" name="person_id" value="'.$id.'">';
+         echo '<input type="submit" name="editmem" value="Update">';
          echo '</td></tr></form>';
       }
          echo '<form action = "" method = "post">';
@@ -171,7 +172,7 @@ function member_addnew($link,$selected){
          echo '<td><input type="text" name="last"></td>';
          echo '<td><input type="checkbox" name="show"></td>';
          echo '<td><input type="date" name="bday"></td>';
-         echo '<td><input type="submit" name="editmem" value="Add New"><input type="hidden" name="family_id" value="'.$selected.'"></td></tr>';
+         echo '<td><input type="hidden" name="family_id" value="'.$selected.'"><input type="submit" name="editmem" value="Add New"></td></tr>';
          echo '</form>';
          echo '</table>';
    }
