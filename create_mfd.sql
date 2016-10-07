@@ -139,7 +139,7 @@ insert into family(family_id,name,address_id,phone,anniversary_id) values (5,'Ga
 -- Kevin
 insert into family(family_id,name,address_id,phone,anniversary_id) values (6,'Martin(St. Clair)',6,NULL,NULL);
 -- Corry
-insert into family(family_id,name,address_id,phone,anniversary_id) values (7,'Martinopolous',7,'952.848.2310',25);
+insert into family(family_id,name,address_id,phone,anniversary_id) values (7,'Martinopolous',7,'9528482310',25);
 -- Eide
 insert into family(family_id,name,address_id,phone,anniversary_id) values (8,'Martin(Jefferson)',8,NULL,NULL);
 -- Sarah

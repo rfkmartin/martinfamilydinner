@@ -29,7 +29,7 @@ function family_table($link){
       {
          $calendar.='<td></td>';
       }
-      $calendar.='<td>'.$phone[$x].'</td>';
+      $calendar.='<td>'.format_phone($phone[$x]).'</td>';
       if (empty($day[$x]))
       {
          $calendar.='<td></td>';
@@ -111,7 +111,7 @@ function family_addnew($link,$selected){
       echo '<tr><td>City:</td><td><input type="text" name="city" value="'.$city.'"></td></tr>';
       echo '<tr><td>State:</td><td><input type="text" name="state" value="'.$state.'"></td></tr>';
       echo '<tr><td>ZIP:</td><td><input type="text" name="zip" value="'.$zip.'"></td></tr>';
-      echo '<tr><td>Phone:</td><td><input type="text" name="phone" value="'.$phone.'"></td></tr>';
+      echo '<tr><td>Phone:</td><td><input type="text" name="phone" value="'.format_phone($phone).'"></td></tr>';
       if (empty($year))
       {
          echo '<tr><td>Anniversary:</td><td><input type="text" id="date" name="anniv" value="" data-format="DD-MM-YYYY" data-template="D MMM YYYY"></td></tr>';
@@ -175,6 +175,22 @@ function member_addnew($link,$selected){
          echo '<td><input type="hidden" name="family_id" value="'.$selected.'"><input type="submit" name="editmem" value="Add New"></td></tr>';
          echo '</form>';
          echo '</table>';
+   }
+}
+function format_phone($phone)
+{
+   if (empty($phone))
+   {
+      return "";
+   }
+   else
+   {
+      // 123.456.7890
+      //return substr($phone,0,3).'.'.substr($phone,3,3).'.'.substr($phone,6,4);
+      // 123-456-7890
+      //return substr($phone,0,3).'-'.substr($phone,3,3).'-'.substr($phone,6,4);
+      // (123) 456-7890
+      return '('.substr($phone,0,3).') '.substr($phone,3,3).'-'.substr($phone,6,4);
    }
 }
 ?>

@@ -18,7 +18,8 @@ date_default_timezone_set("America/Chicago");
 
 //todo
 // new login if not definer user
-//format phone numbers(options?)
+// format phone numbers format options(put in user table)
+// find orphaned dates: select * from date d left join family f on d.date_id=f.anniversary_id left join person p on p.birthday_id=d.date_id where f.family_id is null and p.person_id is null;
 
 //http://www.xlinesoft.com/phprunner/docs/phprunner_session_variables.htm
 //http://stackoverflow.com/questions/21954384/changing-a-php-session-value-by-clicking-on-a-div
@@ -253,6 +254,7 @@ if (isset($_POST['updatefamily']))
    $data = mysqli_query($link,$sql);
    $add_anniv="";
    $add_address="";
+   $phone = preg_replace("/[^0-9]/","",$_POST['phone']);
    list($address_id,$anniversary_id)=mysqli_fetch_row($data);
    if (empty($address_id))
    {
@@ -314,9 +316,16 @@ if (isset($_POST['updatefamily']))
    }
    if (!empty($anniversary_id))
    {
-      $add_anniv=",anniversary_id='".$anniversary_id."'";
+      if (!empty($_POST['anniv']))
+      {
+         $add_anniv=",anniversary_id='".$anniversary_id."'";
+      }
+      else
+      {
+         $add_anniv=",anniversary_id=NULL";
+      }
    }
-   $sql = "update family set name='".$_POST['familyname']."'".$add_address.$add_anniv.",phone='".$_POST['phone']."' where family_id=".$selected_family."";
+   $sql = "update family set name='".$_POST['familyname']."'".$add_address.$add_anniv.",phone='".$phone."' where family_id=".$selected_family."";
    logger($link,$SID,1,$sql);
    if (!mysqli_query($link,$sql))
    {
