@@ -16,6 +16,10 @@ include("family.php");
 include("logger.php");
 date_default_timezone_set("America/Chicago");
 
+//todo
+// new login if not definer user
+//format phone numbers(options?)
+
 //http://www.xlinesoft.com/phprunner/docs/phprunner_session_variables.htm
 //http://stackoverflow.com/questions/21954384/changing-a-php-session-value-by-clicking-on-a-div
 
@@ -336,7 +340,7 @@ echo member_addnew($link,$selected_family);
 print "    </td>\n";
 print "    <td valign=\"top\">\n";
 
-echo draw_calendar($link,4,2016,6);
+echo draw_calendar($link,date('n'),date('Y'),6);
 
 print "</td></tr></table>\n";
 print "</body>\n";
