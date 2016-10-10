@@ -18,7 +18,7 @@ function family_table($link){
       $calendar.='<tr><td>'.$name[$x].'</td>';
       if (!empty($city[$x]))
       {
-         $calendar.='<td align=\"right\">'.$line1[$x].'<br>';
+         $calendar.='<td align="right">'.$line1[$x].'<br>';
          if (!empty($line2[$x]))
          {
          $calendar.=$line2[$x].'<br>';
@@ -105,7 +105,7 @@ function family_addnew($link,$selected){
       $sql = "select family_id,name,line1,line2,city,state,zip,phone,day,month,year from family join address on family.address_id=address.address_id left join date on family.anniversary_id=date.date_id where family_id=".$selected;
       $data = mysqli_query($link,$sql);
       list($family_id,$name,$line1,$line2,$city,$state,$zip,$phone,$day,$month,$year) = mysqli_fetch_row($data);
-      echo '<table border="1"<tr><td>Family Name:</td><td><input type="text" name="familyname" value="'.$name.'"><input type="hidden" name="family_id" value="'.$selected.'"></td></tr>';
+      echo '<table border="1"><tr><td>Family Name:</td><td><input type="text" name="familyname" value="'.$name.'"><input type="hidden" name="family_id" value="'.$selected.'"></td></tr>';
       echo '<tr><td>Address Line 1:</td><td><input type="text" name="line1" value="'.$line1.'"></td></tr>';
       echo '<tr><td>Address Line 2:</td><td><input type="text" name="line2" value="'.$line2.'"></td></tr>';
       echo '<tr><td>City:</td><td><input type="text" name="city" value="'.$city.'"></td></tr>';
@@ -115,11 +115,9 @@ function family_addnew($link,$selected){
       if (empty($year))
       {
          echo '<tr><td>Anniversary:</td><td><input type="text" id="date" name="anniv" value="" data-format="DD-MM-YYYY" data-template="D MMM YYYY"></td></tr>';
-         //<input name="date_of_birth" value="15-05-1984" data-format="DD-MM-YYYY" data-template="D MMM YYYY">
       }
       else
       {
-         //echo '<tr><td>Anniversary:</td><td><input type="date" name="anniv" value="'.$year.'-'.sprintf('%02d',$month).'-'.sprintf('%02d',$day).'"></td></tr>';
          echo '<tr><td>Anniversary:</td><td><input type="text" id="date" name="anniv" data-format="DD-MM-YYYY" data-template="D MMM YYYY" value="'.sprintf('%02d',$day).'-'.sprintf('%02d',$month).'-'.$year.'"></td></tr>';
       }
       echo '<tr><td colspan="2" align="center"><input type="submit" name="updatefamily" value="Update"></td></tr></table>';
@@ -127,14 +125,13 @@ function family_addnew($link,$selected){
    }
    else
    {
-      echo '<table border="1"<tr><td>Family Name:</td><td><input type="text" name="familyname"></td></tr>';
+      echo '<table border="1"><tr><td>Family Name:</td><td><input type="text" name="familyname"></td></tr>';
       echo '<tr><td>Address Line 1:</td><td><input type="text" name="line1"></td></tr>';
       echo '<tr><td>Address Line 2:</td><td><input type="text" name="line2"></td></tr>';
       echo '<tr><td>City:</td><td><input type="text" name="city"></td></tr>';
       echo '<tr><td>State:</td><td><input type="text" name="state"></td></tr>';
       echo '<tr><td>ZIP:</td><td><input type="text" name="zip"></td></tr>';
       echo '<tr><td>Phone:</td><td><input type="text" name="phone"></td></tr>';
-      //echo '<tr><td>Anniversary:</td><td><input type="date" name="anniv"></td></tr>';
       echo '<tr><td>Anniversary:</td><td><input type="text" id="date" name="anniv" data-format="DD-MM-YYYY" data-template="D MMM YYYY"></td></tr>';
       echo '<tr><td colspan="2" align="center"><input type="submit" name="addfamily" value="Add New"></td></tr></table>';
       echo '<script>$(function(){$(\'#date\').combodate();});</script>';
@@ -145,11 +142,12 @@ function family_addnew($link,$selected){
 /* print form to add/edit members */
 function member_addnew($link,$selected){
 
+   $i=1;
    if ($selected>=0)
    {
       $sql = "select person_id,first_name,last_name,show_age,day,month,year,birthday_id from person left join date on person.birthday_id=date.date_id where family_id=".$selected;
       $data = mysqli_query($link,$sql);
-      echo '<table border="1"<tr><td>First Name</td><td>Last Name</td><td>Show Age?</td><td>Birthdate</td><td></td></tr>';
+      echo '<table border="1"><tr><td width="175px">First Name</td><td width="175px">Last Name</td><td width="100px">Show Age?</td><td width="175px">Birthdate</td><td width="75px"></td></tr></table>';
       while(list($id,$first,$last,$show,$day,$month,$year,$bdayid) = mysqli_fetch_row($data))
       {
          $show_age="";
@@ -158,23 +156,27 @@ function member_addnew($link,$selected){
             $show_age=' checked';
          }
          echo '<form action = "" method = "post">';
-         echo '<td><input type="text" name="first" value="'.$first.'"></td>';
-         echo '<td><input type="text" name="last" value="'.$last.'"></td>';
-         echo '<td><input type="checkbox" name="show"'.$show_age.'></td>';
-         //echo '<td><input type="checkbox" name="show" value="Show Age?"'.$show_age.'></td>';
-         echo '<td><input type="date" name="bday" value="'.$year.'-'.sprintf('%02d',$month).'-'.sprintf('%02d',$day).'"></td>';
-         echo '<td><input type="hidden" name="bday_id" value="'.$bdayid.'"><input type="hidden" name="family_id" value="'.$selected.'"><input type="hidden" name="person_id" value="'.$id.'">';
+         echo '<table border="1"><tr>';
+         echo '<td width="175px"><input type="text" name="first" value="'.$first.'"></td>';
+         echo '<td width="175px"><input type="text" name="last" value="'.$last.'"></td>';
+         echo '<td width="100px"><input type="checkbox" name="show"'.$show_age.'></td>';
+         echo '<td width="175px"><input type="text" id="bdate'.$i.'" name="bday" data-format="DD-MM-YYYY" data-template="D MMM YYYY" value="'.sprintf('%02d',$day).'-'.sprintf('%02d',$month).'-'.$year.'"></td>';
+         echo '<td width="75px"><input type="hidden" name="bday_id" value="'.$bdayid.'"><input type="hidden" name="family_id" value="'.$selected.'"><input type="hidden" name="person_id" value="'.$id.'">';
          echo '<input type="submit" name="editmem" value="Update">';
-         echo '</td></tr></form>';
+         echo '</td></tr></table>';
+         echo '<script>$(function(){$(\'#bdate'.$i.'\').combodate();});</script>';
+         echo '</form>';
+         $i++;
       }
          echo '<form action = "" method = "post">';
-         echo '<td><input type="text" name="first"></td>';
-         echo '<td><input type="text" name="last"></td>';
-         echo '<td><input type="checkbox" name="show"></td>';
-         echo '<td><input type="date" name="bday"></td>';
-         echo '<td><input type="hidden" name="family_id" value="'.$selected.'"><input type="submit" name="editmem" value="Add New"></td></tr>';
-         echo '</form>';
+         echo '<table border="1"><tr>';
+         echo '<td width="175px"><input type="text" name="first"></td>';
+         echo '<td width="175px"><input type="text" name="last"></td>';
+         echo '<td width="100px"><input type="checkbox" name="show"></td>';
+         echo '<td width="175px"><input type="text" id="bdate'.$i.'" name="bday" data-format="DD-MM-YYYY" data-template="D MMM YYYY" ></td>';
+         echo '<td width="75px"><input type="hidden" name="family_id" value="'.$selected.'"><input type="submit" name="editmem" value="Add New"></td></tr>';
          echo '</table>';
+         echo '<script>$(function(){$(\'#bdate'.$i.'\').combodate();});</script></form>';
    }
 }
 function format_phone($phone)

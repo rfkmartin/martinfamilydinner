@@ -5,9 +5,9 @@ print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http:/
 print "<html><head>\n";
 print "<title>Martin Family Dinner</title>\n";
 print "<link href=\"/martinfamilydinner/style.css\" rel=\"stylesheet\" type=\"text/css\">\n";
-print "<script src=\"js/jquery.js\"></script>\n";
-print "<script src=\"js/moment.min.js\"></script>\n";
-print "<script src=\"js/combodate.js\"></script>\n";
+print "<script src=\"js/jquery.js\" type=\"text/javascript\"></script>\n";
+print "<script src=\"js/moment.min.js\" type=\"text/javascript\"></script>\n";
+print "<script src=\"js/combodate.js\" type=\"text/javascript\"></script>\n";
 print "</head>\n";
 
 require_once("login.php");
@@ -32,7 +32,7 @@ print "    <table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\
 print "    <tr>\n";
 print "    <td colspan=\"2\">\n";
 print "      <table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\n";
-print "        <tr><td valign=\"bottom\" class=\"table_header\"><img src=\"Martin-Irish-Crest.jpg\" height=\"150\"/>Martin Family Dinner</td>\n";
+print "        <tr><td valign=\"bottom\" class=\"table_header\"><img src=\"Martin-Irish-Crest.jpg\" height=\"150\" alt=\"Martin Family Crest\">Martin Family Dinner</td>\n";
 print "        <td valign=\"top\">Welcome, <span class=\"person\">Martinopoulos Family</span><br>\n";
 print "        Account<br>\n";
 print "        Logout<br></td></tr>\n";
