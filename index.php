@@ -8,7 +8,14 @@ print "</head>\n";
 require_once("login.php");
 include("month.php");
 date_default_timezone_set("America/Chicago");
+// header
+//login
+//calendar
 
+//header w/ user&logout
+//welcome user
+//links to family editing
+//calendar
 print "<body>\n";
 print "<table width=\"1080\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" id=\"main_table\" class=\"main_table\">\n";
 print "  <tr>\n";

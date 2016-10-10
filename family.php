@@ -193,4 +193,38 @@ function format_phone($phone)
       return '('.substr($phone,0,3).') '.substr($phone,3,3).'-'.substr($phone,6,4);
    }
 }
+function add_food($link)
+{
+   $i=0;
+   $sql = "select food from food";
+   $data = mysqli_query($link,$sql);
+   while (list($food[$i])=mysqli_fetch_row($data)) {
+      $i++;
+   }
+   $calendar='<table border="1" cellpadding="1" cellspacing="1">';
+   for ($j=0;$j<$i;$j+=4)
+   {
+      $calendar.='<tr><td>'.$food[$j].'</td><td>';
+      if ($j+1<$i)
+      {
+         $calendar.=$food[$j+1];
+      }
+      $calendar.='</td><td>';
+      if ($j+2<$i)
+      {
+         $calendar.=$food[$j+2];
+      }
+      $calendar.='</td><td>';
+      if ($j+3<$i)
+      {
+         $calendar.=$food[$j+3];
+      }
+      $calendar.='</td></tr>';
+   }
+   $calendar.='</table><br>';
+   $calendar.='<form action = "" method = "post">';
+   $calendar.='<table><td><td>Add New Food</td><td><input type="text" name="food"><input type="submit" name="addfood" value="Add"></td></table>';
+   $calendar.='</form>';
+   return $calendar;
+}
 ?>

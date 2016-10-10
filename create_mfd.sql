@@ -2,6 +2,12 @@ drop database if exists mfd;
 create database mfd;
 use mfd;
 
+create table food (
+   food_id int not null auto_increment,
+   food varchar(64) not null,
+   primary key (food_id)
+);
+
 create table logger (
    logger_id int not null auto_increment,
    msg_dt datetime not null,
@@ -176,6 +182,17 @@ insert into person(person_id,first_name,last_name,family_id,birthday_id,show_age
 insert into person(person_id,first_name,last_name,family_id,birthday_id,show_age) values (23,'Teddy','Martin',7,23,true);
 insert into person(person_id,first_name,last_name,family_id,birthday_id,show_age) values (24,'Bobby','Martin',7,24,true);
 
-insert into user(user_id,username,passcode,family_id) values (1,'rfkmartin@gmail.com','$2y$10$PH2Oebi7uTmTA/yssOvZyeH1hO/8Tvb/zji08snvnHFU0pUnzgBOS',7);
+-- abc123/
+insert into user(user_id,username,passcode,family_id) values (1,'rfkmartin@gmail.com','$2y$10$Wq/fWFdJRfbV1u8O1Hh/UO2R2kWht3XNowsCVbE5DV3V9zvMkFrIW',7);
 
 insert into event(event_id,date_id,family_id) values (1,26,7);
+
+insert into food(food_id,food) values (1,'main course');
+insert into food(food_id,food) values (2,'red wine');
+insert into food(food_id,food) values (3,'white wine');
+insert into food(food_id,food) values (4,'beer');
+insert into food(food_id,food) values (5,'salad');
+insert into food(food_id,food) values (6,'dessert');
+insert into food(food_id,food) values (7,'fruit');
+insert into food(food_id,food) values (8,'veggies');
+insert into food(food_id,food) values (9,'juice boxes');

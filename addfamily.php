@@ -336,7 +336,16 @@ if (isset($_POST['change']))
 {
    $selected_family=$_POST['family'];
 }
-
+if (isset($_POST['addfood']))
+{
+   $food=$_POST['food'];
+   $sql = "insert into food(food) values ('".$food."')";
+   logger($link,$SID,1,$sql);
+   if (!mysqli_query($link,$sql))
+   {
+      logger($link,$SID,1,"Error inserting record: " . mysqli_error($link));
+   }
+}
 echo family_ddl($link,$selected_family);
 echo "<br><br>";
 echo family_addnew($link,$selected_family);
@@ -346,6 +355,8 @@ echo "<br><br>";
 echo familymem_table($link,$selected_family);
 echo "<br><br>";
 echo member_addnew($link,$selected_family);
+echo "<br><br>";
+echo add_food($link);
 print "    </td>\n";
 print "    <td valign=\"top\">\n";
 
