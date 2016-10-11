@@ -242,7 +242,7 @@ function add_food($link)
 // print all upcoming events with food and attendance
 function print_dinners($link)
 {
-   $sql = "select * from (select f.name,e.family_id,d.month,d.day,d.year,str_to_date(concat(concat(month,'/',day),'/',year),'%m/%d/%Y') dt from date d join event e on d.date_id=e.date_id join family f on f.family_id=e.family_id) as a where a.dt>curdate()";
+   $sql = "select * from (select f.name,e.family_id,d.month,d.day,d.year,str_to_date(concat(concat(month,'/',greatest(day,1)),'/',year),'%m/%d/%Y') dt from date d join event e on d.date_id=e.date_id join family f on f.family_id=e.family_id) as a where a.dt>curdate()";
    logger($link,$sql);
    $data = mysqli_query($link,$sql);
    $i=0;
@@ -253,7 +253,16 @@ function print_dinners($link)
    for ($j=0;$j<$i;$j++)
    {
       echo '<table border="1"><tr><td colspan="2">';
-      echo '<b>'.date("F",strtotime($date[$j])).' '.$year[$j].'</b><br><b>Host:</b> '.$fam_name[$j].'<br><b>Date:</b>'.date("D",strtotime($date[$j])).', '.$month[$j].' '.$day[$j].'<br><b>Time:</b> 4pm</td></tr>';
+      echo '<b>'.date("F",strtotime($date[$j])).' '.$year[$j].'</b><br><b>Host:</b> '.$fam_name[$j].'<br><b>Date:</b>';
+      if ($day[$j]<1)
+      {
+         echo '<b>TBD</b>';
+      }
+      else
+      {
+         echo date("D",strtotime($date[$j])).', '.$month[$j].' '.$day[$j];
+      }
+      echo '<br><b>Time:</b> 4pm</td></tr>';
       echo '<tr><td valign="top" width="50%"><table border="1"><tr><td colspan="2"><b>Dishes</b></td></tr>';
       echo '<tr><td valign="top"><b>Martinopoulos</b></td><td>main course</td></tr>';
       echo '<tr><td valign="top"><b>Jefferson Martin Family</b></td><td>pasta salad</td></tr>';
