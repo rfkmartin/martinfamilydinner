@@ -14,6 +14,7 @@ require_once("login.php");
 include("month.php");
 include("family.php");
 include("logger.php");
+$SHOW_MONTHS=12;
 date_default_timezone_set("America/Chicago");
 
 //todo
@@ -334,7 +335,14 @@ if (isset($_POST['updatefamily']))
 }
 if (isset($_POST['change']))
 {
-   $selected_family=$_POST['family'];
+   if ($_POST['family']==-1)
+   {
+      $_SESSION['family_id']=NULL;
+   }
+   else
+   {
+      $_SESSION['family_id']=$_POST['family'];
+   }
 }
 if (isset($_POST['addfood']))
 {
@@ -346,21 +354,21 @@ if (isset($_POST['addfood']))
       logger($link,$SID,1,"Error inserting record: " . mysqli_error($link));
    }
 }
-echo family_ddl($link,$selected_family);
+echo family_ddl($link);
 echo "<br><br>";
-echo family_addnew($link,$selected_family);
+echo family_addnew($link);
 echo "<br><br>";
 echo family_table($link);
 echo "<br><br>";
-echo familymem_table($link,$selected_family);
+echo familymem_table($link);
 echo "<br><br>";
-echo member_addnew($link,$selected_family);
+echo member_addnew($link);
 echo "<br><br>";
 echo add_food($link);
 print "    </td>\n";
 print "    <td valign=\"top\">\n";
 
-echo draw_calendar($link,date('n'),date('Y'),6);
+echo draw_calendar($link,date('n'),date('Y'),$SHOW_MONTHS);
 
 print "</td></tr></table>\n";
 print "</body>\n";

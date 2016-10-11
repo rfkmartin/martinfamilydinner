@@ -1,6 +1,7 @@
 <?php
 /* print table of familes */
-function family_table($link){
+function family_table($link)
+{
 
    $i=0;
    $sql = "select family_id,name,phone,day,month,year,line1,line2,city,state,zip from family left join date on anniversary_id=date_id left join address on family.address_id=address.address_id order by name";
@@ -46,11 +47,15 @@ function family_table($link){
 }
 
 /* print table of family members */
-function familymem_table($link,$selected){
-
+function familymem_table($link)
+{
+   if (empty($_SESSION['family_id']))
+   {
+      return "";
+   }
    $i=0;
 
-   $sql = "select person_id,first_name,last_name,day,month,year from person join family on person.family_id=family.family_id join date on person.birthday_id=date.date_id where person.family_id=".$selected;
+   $sql = "select person_id,first_name,last_name,day,month,year from person join family on person.family_id=family.family_id join date on person.birthday_id=date.date_id where person.family_id=".$_SESSION['family_id'];
    $data = mysqli_query($link,$sql);
    while (list($id[$i],$fname[$i],$lname[$i],$day[$i],$month[$i],$year[$i])=mysqli_fetch_row($data)) {
       $i++;
@@ -78,7 +83,8 @@ function familymem_table($link,$selected){
 }
 
 /* print dropdown list of familes */
-function family_ddl($link,$selected){
+function family_ddl($link)
+{
    echo '<form action = "" method = "post"><select name="family">';
 
    $sql = "select family_id,name from family";
@@ -87,7 +93,7 @@ function family_ddl($link,$selected){
    while(list($family_id,$name) = mysqli_fetch_row($data))
    {
       echo '<option value="'.$family_id.'"';
-      if ($family_id==$selected)
+      if (!empty($_SESSION['family_id'])&&$family_id==$_SESSION['family_id'])
       {
          echo ' selected';
       }
@@ -97,15 +103,16 @@ function family_ddl($link,$selected){
 }
 
 /* print form to add/edit families */
-function family_addnew($link,$selected){
+function family_addnew($link)
+{
    echo '<form action = "" method = "post">';
 
-   if ($selected>=0)
+   if (!empty($_SESSION['family_id']))
    {
-      $sql = "select family_id,name,line1,line2,city,state,zip,phone,day,month,year from family join address on family.address_id=address.address_id left join date on family.anniversary_id=date.date_id where family_id=".$selected;
+      $sql = "select family_id,name,line1,line2,city,state,zip,phone,day,month,year from family join address on family.address_id=address.address_id left join date on family.anniversary_id=date.date_id where family_id=".$_SESSION['family_id'];
       $data = mysqli_query($link,$sql);
       list($family_id,$name,$line1,$line2,$city,$state,$zip,$phone,$day,$month,$year) = mysqli_fetch_row($data);
-      echo '<table border="1"><tr><td>Family Name:</td><td><input type="text" name="familyname" value="'.$name.'"><input type="hidden" name="family_id" value="'.$selected.'"></td></tr>';
+      echo '<table border="1"><tr><td>Family Name:</td><td><input type="text" name="familyname" value="'.$name.'"><input type="hidden" name="family_id" value="'.$_SESSION['family_id'].'"></td></tr>';
       echo '<tr><td>Address Line 1:</td><td><input type="text" name="line1" value="'.$line1.'"></td></tr>';
       echo '<tr><td>Address Line 2:</td><td><input type="text" name="line2" value="'.$line2.'"></td></tr>';
       echo '<tr><td>City:</td><td><input type="text" name="city" value="'.$city.'"></td></tr>';
@@ -140,12 +147,13 @@ function family_addnew($link,$selected){
 }
 
 /* print form to add/edit members */
-function member_addnew($link,$selected){
+function member_addnew($link)
+{
 
    $i=1;
-   if ($selected>=0)
+   if (!empty($_SESSION['family_id']))
    {
-      $sql = "select person_id,first_name,last_name,show_age,day,month,year,birthday_id from person left join date on person.birthday_id=date.date_id where family_id=".$selected;
+      $sql = "select person_id,first_name,last_name,show_age,day,month,year,birthday_id from person left join date on person.birthday_id=date.date_id where family_id=".$_SESSION['family_id'];
       $data = mysqli_query($link,$sql);
       echo '<table border="1"><tr><td width="175px">First Name</td><td width="175px">Last Name</td><td width="100px">Show Age?</td><td width="175px">Birthdate</td><td width="75px"></td></tr></table>';
       while(list($id,$first,$last,$show,$day,$month,$year,$bdayid) = mysqli_fetch_row($data))
@@ -161,7 +169,7 @@ function member_addnew($link,$selected){
          echo '<td width="175px"><input type="text" name="last" value="'.$last.'"></td>';
          echo '<td width="100px"><input type="checkbox" name="show"'.$show_age.'></td>';
          echo '<td width="175px"><input type="text" id="bdate'.$i.'" name="bday" data-format="DD-MM-YYYY" data-template="D MMM YYYY" value="'.sprintf('%02d',$day).'-'.sprintf('%02d',$month).'-'.$year.'"></td>';
-         echo '<td width="75px"><input type="hidden" name="bday_id" value="'.$bdayid.'"><input type="hidden" name="family_id" value="'.$selected.'"><input type="hidden" name="person_id" value="'.$id.'">';
+         echo '<td width="75px"><input type="hidden" name="bday_id" value="'.$bdayid.'"><input type="hidden" name="family_id" value="'.$_SESSION['family_id'].'"><input type="hidden" name="person_id" value="'.$id.'">';
          echo '<input type="submit" name="editmem" value="Update">';
          echo '</td></tr></table>';
          echo '<script>$(function(){$(\'#bdate'.$i.'\').combodate();});</script>';
@@ -174,7 +182,7 @@ function member_addnew($link,$selected){
          echo '<td width="175px"><input type="text" name="last"></td>';
          echo '<td width="100px"><input type="checkbox" name="show"></td>';
          echo '<td width="175px"><input type="text" id="bdate'.$i.'" name="bday" data-format="DD-MM-YYYY" data-template="D MMM YYYY" ></td>';
-         echo '<td width="75px"><input type="hidden" name="family_id" value="'.$selected.'"><input type="submit" name="editmem" value="Add New"></td></tr>';
+         echo '<td width="75px"><input type="hidden" name="family_id" value="'.$_SESSION['family_id'].'"><input type="submit" name="editmem" value="Add New"></td></tr>';
          echo '</table>';
          echo '<script>$(function(){$(\'#bdate'.$i.'\').combodate();});</script></form>';
    }
