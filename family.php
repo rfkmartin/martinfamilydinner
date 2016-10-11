@@ -1,5 +1,5 @@
 <?php
-/* print table of familes */
+// print table of familes
 function family_table($link)
 {
 
@@ -46,7 +46,7 @@ function family_table($link)
 	return $calendar;
 }
 
-/* print table of family members */
+// print table of family members
 function familymem_table($link)
 {
    if (empty($_SESSION['family_id']))
@@ -82,7 +82,7 @@ function familymem_table($link)
 	return $calendar;
 }
 
-/* print dropdown list of familes */
+// print dropdown list of familes
 function family_ddl($link)
 {
    echo '<form action = "" method = "post"><select name="family">';
@@ -102,7 +102,7 @@ function family_ddl($link)
    echo '</select><input type="submit" name="change" value="Change Family"></form>';
 }
 
-/* print form to add/edit families */
+// print form to add/edit families
 function family_addnew($link)
 {
    echo '<form action = "" method = "post">';
@@ -146,7 +146,7 @@ function family_addnew($link)
    echo '</form>';
 }
 
-/* print form to add/edit members */
+// print form to add/edit members
 function member_addnew($link)
 {
 
@@ -187,6 +187,7 @@ function member_addnew($link)
          echo '<script>$(function(){$(\'#bdate'.$i.'\').combodate();});</script></form>';
    }
 }
+// format phone numbers according to user definition
 function format_phone($phone)
 {
    if (empty($phone))
@@ -203,6 +204,7 @@ function format_phone($phone)
       return '('.substr($phone,0,3).') '.substr($phone,3,3).'-'.substr($phone,6,4);
    }
 }
+// print current food options and form to add more
 function add_food($link)
 {
    $i=0;
@@ -236,5 +238,34 @@ function add_food($link)
    $calendar.='<table><td><td>Add New Food</td><td><input type="text" name="food"><input type="submit" name="addfood" value="Add"></td></table>';
    $calendar.='</form>';
    return $calendar;
+}
+// print all upcoming events with food and attendance
+function print_dinners($link)
+{
+   $sql = "select * from (select f.name,e.family_id,d.month,d.day,d.year,str_to_date(concat(concat(month,'/',day),'/',year),'%m/%d/%Y') dt from date d join event e on d.date_id=e.date_id join family f on f.family_id=e.family_id) as a where a.dt>curdate()";
+   logger($link,$sql);
+   $data = mysqli_query($link,$sql);
+   $i=0;
+   while (list($fam_name[$i],$fam_id[$i],$month[$i],$day[$i],$year[$i],$date[$i])=mysqli_fetch_row($data)) {
+      $i++;
+   }
+
+   for ($j=0;$j<$i;$j++)
+   {
+      echo '<table border="1"><tr><td colspan="2">';
+      echo '<b>'.date("F",strtotime($date[$j])).' '.$year[$j].'</b><br><b>Host:</b> '.$fam_name[$j].'<br><b>Date:</b>'.date("D",strtotime($date[$j])).', '.$month[$j].' '.$day[$j].'<br><b>Time:</b> 4pm</td></tr>';
+      echo '<tr><td valign="top" width="50%"><table border="1"><tr><td colspan="2"><b>Dishes</b></td></tr>';
+      echo '<tr><td valign="top"><b>Martinopoulos</b></td><td>main course</td></tr>';
+      echo '<tr><td valign="top"><b>Jefferson Martin Family</b></td><td>pasta salad</td></tr>';
+      echo '<tr><td valign="top"><b>Bill Martin Family</b></td><td>white wine</td></tr>';
+      echo '<tr><td valign="top"><b>Eide Family</b></td><td>veggie tray</td></tr>';
+      echo '</table></td><td valign="top">';
+      echo '<table border="1><tr><td colspan="2"><b>Attending</b></td></tr>';
+      echo '<tr><td valign="top"><b>Martinopoulos</b></td><td>Rob<br>Steph<br>Stevie<br>Bobby<br>Teddy<br></td></tr>';
+      echo '<tr><td valign="top"><b>Jefferson Martin Family</b></td><td>Patrick<br><Rebecca<br><Finn<br>Brigit</td></tr>';
+      echo '<tr><td valign="top"><b>Bill Martin Family</b></td><td>Bill<br>Maripat</td></tr>';
+      echo '<tr><td valign="top"><b>Eide Family</b></td><td>Mike<br>Jordan</td></tr>';
+      echo '</table></td></tr></table><br>';
+   }
 }
 ?>
