@@ -23,7 +23,7 @@ function draw_calendar($link,$month,$year,$number){
    for ($i=0;$i<$number;$i++)
    {
       $thismonth=$month+$i;
-      if ($thismonth>12)
+      while ($thismonth>12)
       {
          if ($thismonth==13)
          {
@@ -145,6 +145,4 @@ function draw_calendar($link,$month,$year,$number){
 	/* all done, return result */
 	return $calendar;
 }
-//require_once("login.php");
-//echo draw_calendar($link,4,2016,4);
 ?>

@@ -240,29 +240,24 @@ function add_food($link)
    return $calendar;
 }
 // print all upcoming events with food and attendance
-function print_dinners($link)
+function print_events($link)
 {
-   $sql = "select * from (select f.name,e.family_id,d.month,d.day,d.year,str_to_date(concat(concat(month,'/',greatest(day,1)),'/',year),'%m/%d/%Y') dt from date d join event e on d.date_id=e.date_id join family f on f.family_id=e.family_id) as a where a.dt>curdate()";
+   $sql = "select * from (select f.name,e.family_id,ad.line1,ad.city,ad.state,d.month,d.day,d.year,str_to_date(concat(concat(month,'/',greatest(day,1)),'/',year),'%m/%d/%Y') dt from date d join event e on d.date_id=e.date_id join family f on f.family_id=e.family_id join address ad on ad.address_id=f.address_id) as a where a.dt>curdate()";
    logger($link,$sql);
    $data = mysqli_query($link,$sql);
-   $i=0;
-   while (list($fam_name[$i],$fam_id[$i],$month[$i],$day[$i],$year[$i],$date[$i])=mysqli_fetch_row($data)) {
-      $i++;
-   }
-
-   for ($j=0;$j<$i;$j++)
-   {
+   while (list($fam_name,$fam_id,$line1,$city,$state,$month,$day,$year,$date)=mysqli_fetch_row($data)) {
       echo '<table border="1"><tr><td colspan="2">';
-      echo '<b>'.date("F",strtotime($date[$j])).' '.$year[$j].'</b><br><b>Host:</b> '.$fam_name[$j].'<br><b>Date:</b>';
-      if ($day[$j]<1)
+      echo '<b>'.date("F",strtotime($date)).' '.$year.'</b><br><b>Host:</b> '.$fam_name.'<br><b>Date:</b>';
+      if ($day<1)
       {
          echo '<b>TBD</b>';
       }
       else
       {
-         echo date("D",strtotime($date[$j])).', '.$month[$j].' '.$day[$j];
+         echo date("D",strtotime($date)).', '.date("M",strtotime($date)).' '.$day;
       }
-      echo '<br><b>Time:</b> 4pm</td></tr>';
+      echo '<br><b>Time:</b> 4pm';
+      echo '<br><b>Location:</b> '.$line1.' '.$city.', '.$state.'</td></tr>';
       echo '<tr><td valign="top" width="50%"><table border="1"><tr><td colspan="2"><b>Dishes</b></td></tr>';
       echo '<tr><td valign="top"><b>Martinopoulos</b></td><td>main course</td></tr>';
       echo '<tr><td valign="top"><b>Jefferson Martin Family</b></td><td>pasta salad</td></tr>';
@@ -276,5 +271,57 @@ function print_dinners($link)
       echo '<tr><td valign="top"><b>Eide Family</b></td><td>Mike<br>Jordan</td></tr>';
       echo '</table></td></tr></table><br>';
    }
+}
+// print all upcoming events with food and attendance
+function add_events($link)
+{
+   $sql = "select * from (select e.event_id,f.name,e.family_id,d.month,d.day,d.year,str_to_date(concat(concat(month,'/',greatest(day,1)),'/',year),'%m/%d/%Y') dt from date d join event e on d.date_id=e.date_id join family f on f.family_id=e.family_id) as a where a.dt>curdate()";
+   logger($link,$sql);
+   $data = mysqli_query($link,$sql);
+   $i=0;
+   while (list($e_id,$fam_name,$fam_id,$month,$day,$year,$date)=mysqli_fetch_row($data)) {
+      $sql1 = "select family_id,name from family";
+      $data1 = mysqli_query($link,$sql1);
+      $ddl='<select name="family"><option value="-1">Choose a family</option>';
+      while(list($family_id,$name) = mysqli_fetch_row($data1))
+      {
+         $ddl.='<option value="'.$family_id.'"';
+         if ($fam_id==$family_id)
+         {
+            $ddl.=' selected';
+         }
+         $ddl.='>'.$name.'</option>'."\n";
+      }
+      $ddl.='</select>';
+      echo '<form action = "" method = "post">';
+      echo '<table border="1"><tr>';
+      echo '<td width="175px">'.$ddl.'</td>';
+      echo '<td width="175px"><input type="text" id="edate'.$i.'" name="eday" data-format="DD-MM-YYYY" data-template="D MMM YYYY" value="'.sprintf('%02d',$day).'-'.sprintf('%02d',$month).'-'.$year.'"></td>';
+      echo '<td width="175px"><input type="hidden" name="e_id" value="'.$e_id.'"><input type="hidden" name="family_id" value="'.$fam_id.'">';
+      echo '<input type="submit" name="updateevent" value="Update">';
+      echo '<input type="submit" name="deleteevent" value="Delete">';
+      echo '</td></tr></table>';
+      echo '<script>$(function(){$(\'#edate'.$i.'\').combodate({minYear:2016,maxYear:2018});});</script>';
+      echo '</form>';
+      $i++;
+   }
+   $sql = "select family_id,name from family";
+   $data = mysqli_query($link,$sql);
+   $ddl='<select name="family"><option value="-1" selected>Choose a family</option>';
+   while(list($family_id,$name) = mysqli_fetch_row($data))
+   {
+      $ddl.='<option value="'.$family_id.'"';
+      $ddl.='>'.$name.'</option>'."\n";
+   }
+   $ddl.='</select>';
+   echo '<form action = "" method = "post">';
+   echo '<table border="1"><tr>';
+   echo '<td width="175px">'.$ddl.'</td>';
+   echo '<td width="175px"><input type="text" id="edate'.$i.'" name="eday" data-format="DD-MM-YYYY" data-template="D MMM YYYY"></td>';
+   echo '<td width="175px">';
+   echo '<input type="submit" name="addevent" value="Add New">';
+   echo '</td></tr></table>';
+   echo '<script>$(function(){$(\'#edate'.$i.'\').combodate({minYear:2016,maxYear:2018});});</script>';
+   echo '</form>';
 }
 ?>
