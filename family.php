@@ -242,7 +242,9 @@ function add_food($link)
 // print all upcoming events with food and attendance
 function print_events($link)
 {
-   $sql = "select * from (select f.name,e.family_id,ad.line1,ad.city,ad.state,d.month,d.day,d.year,str_to_date(concat(concat(month,'/',greatest(day,1)),'/',year),'%m/%d/%Y') dt from date d join event e on d.date_id=e.date_id join family f on f.family_id=e.family_id join address ad on ad.address_id=f.address_id) as a where a.dt>curdate()";
+   // print archived/past events
+   // print cancelled events
+   $sql = "select * from (select f.name,e.family_id,ad.line1,ad.city,ad.state,d.month,d.day,d.year,str_to_date(concat(concat(month,'/',greatest(day,1)),'/',year),'%m/%d/%Y') dt from date d join event e on d.date_id=e.date_id join family f on f.family_id=e.family_id join address ad on ad.address_id=f.address_id where e.cancel=0) as a where a.dt>curdate()";
    logger($link,$sql);
    $data = mysqli_query($link,$sql);
    while (list($fam_name,$fam_id,$line1,$city,$state,$month,$day,$year,$date)=mysqli_fetch_row($data)) {
@@ -275,10 +277,80 @@ function print_events($link)
 // print all upcoming events with food and attendance
 function add_events($link)
 {
-   $sql = "select * from (select e.event_id,f.name,e.family_id,d.month,d.day,d.year,str_to_date(concat(concat(month,'/',greatest(day,1)),'/',year),'%m/%d/%Y') dt from date d join event e on d.date_id=e.date_id join family f on f.family_id=e.family_id) as a where a.dt>curdate()";
+   if (isset($_POST['addevent']))
+   {
+      $family_id=$_POST['family'];
+      //check for valid month year
+      echo 'eday: '.$_POST['eday'].' etday: '.$_POST['etday'].' ';
+      if ($_POST['eday']=="")
+      {
+         $eventm=date('m', strtotime($_POST['etday']));
+         $eventY=date('Y', strtotime($_POST['etday']));
+         $eventd=-1;
+         echo 'dt: '.$eventd.' mt: '.$eventm.' Yt: '.$eventY;
+      }
+      else
+      {
+         $eventm=date('m', strtotime($_POST['eday']));
+         $eventY=date('Y', strtotime($_POST['eday']));
+         $eventd=date('d', strtotime($_POST['eday']));
+         echo 'd: '.$eventd.' m: '.$eventm.' Y: '.$eventY;
+      }
+      $sql = "insert into date(day,month,year) values ('".$eventd."','".$eventm."','".$eventY."')";
+      logger($link,$sql);
+      if (mysqli_query($link,$sql))
+      {
+         $date_id = mysqli_insert_id($link);
+      }
+      else
+      {
+         logger($link,"Error inserting record: " . mysqli_error($link));
+      }
+      $sql = "insert into event(family_id,date_id) values (".$family_id.",".$date_id.")";
+      logger($link,$sql);
+      if (!mysqli_query($link,$sql))
+      {
+         logger($link,"Error inserting record: " . mysqli_error($link));
+      }
+   }
+   if (isset($_POST['updateevent']))
+   {
+      if ($_POST['cancel']=='on')
+      {
+         echo 'cancel:'.$_POST['cancel'].' xxx';
+         $e_id=$_POST['e_id'];
+         $sql = "update event set cancel=1 where event_id=".$e_id;
+         logger($link,$sql);
+         if (!mysqli_query($link,$sql))
+         {
+            logger($link,"Error updating record: " . mysqli_error($link));
+         }
+      }
+   }
+   if (isset($_POST['deleteevent']))
+   {
+      // do i delete everything associated(attendance, food)
+      // or change year to 1900(eg) and add a note for archival viewing
+      // or add a cancelled field?
+      $e_id=$_POST['e_id'];
+      $sql = 'update date d join event e on d.date_id=e.date_id set year=1900 where e.event_id='.$e_id;
+      logger($link,$sql);
+      if (!mysqli_query($link,$sql))
+      {
+         logger($link,"Error inserting record: " . mysqli_error($link));
+      }
+   }
+
+   $sql = "select * from (select e.event_id,f.name,e.family_id,d.month,d.day,d.year,str_to_date(concat(concat(month,'/',greatest(day,1)),'/',year),'%m/%d/%Y') dt from date d join event e on d.date_id=e.date_id join family f on f.family_id=e.family_id where e.cancel=0) as a where a.dt>curdate()";
    logger($link,$sql);
    $data = mysqli_query($link,$sql);
    $i=0;
+      echo '<table border="1"><tr>';
+      echo '<td width="175px"><b>Family</b></td>';
+      echo '<td width="175px"><b>Tentative Date</b></td>';
+      echo '<td width="175px"><b>Solid Date</b></td>';
+      echo '<td width="50px"><b><b>Cancel</b></b></td>';
+      echo '<td width="175px"></td></tr></table>';
    while (list($e_id,$fam_name,$fam_id,$month,$day,$year,$date)=mysqli_fetch_row($data)) {
       $sql1 = "select family_id,name from family";
       $data1 = mysqli_query($link,$sql1);
@@ -296,11 +368,13 @@ function add_events($link)
       echo '<form action = "" method = "post">';
       echo '<table border="1"><tr>';
       echo '<td width="175px">'.$ddl.'</td>';
+      echo '<td width="175px"><input type="text" id="etdate'.$i.'" name="etday" data-format="YYYY-MM" data-template="MMM YYYY" value="'.$year.'-'.sprintf('%02d',$month).'"></td>';
       echo '<td width="175px"><input type="text" id="edate'.$i.'" name="eday" data-format="DD-MM-YYYY" data-template="D MMM YYYY" value="'.sprintf('%02d',$day).'-'.sprintf('%02d',$month).'-'.$year.'"></td>';
+      echo '<td width="50px"><input type="checkbox" name="cancel"></td>';
       echo '<td width="175px"><input type="hidden" name="e_id" value="'.$e_id.'"><input type="hidden" name="family_id" value="'.$fam_id.'">';
       echo '<input type="submit" name="updateevent" value="Update">';
-      echo '<input type="submit" name="deleteevent" value="Delete">';
       echo '</td></tr></table>';
+      echo '<script>$(function(){$(\'#etdate'.$i.'\').combodate({minYear:2016,maxYear:2018});});</script>';
       echo '<script>$(function(){$(\'#edate'.$i.'\').combodate({minYear:2016,maxYear:2018});});</script>';
       echo '</form>';
       $i++;
@@ -317,10 +391,13 @@ function add_events($link)
    echo '<form action = "" method = "post">';
    echo '<table border="1"><tr>';
    echo '<td width="175px">'.$ddl.'</td>';
+   echo '<td width="175px"><input type="text" id="etdate'.$i.'" name="etday" data-format="YYYY-MM" data-template="MMM YYYY"></td>';
    echo '<td width="175px"><input type="text" id="edate'.$i.'" name="eday" data-format="DD-MM-YYYY" data-template="D MMM YYYY"></td>';
+   echo '<td width="50px"></td>';
    echo '<td width="175px">';
    echo '<input type="submit" name="addevent" value="Add New">';
    echo '</td></tr></table>';
+   echo '<script>$(function(){$(\'#etdate'.$i.'\').combodate({minYear:2016,maxYear:2018});});</script>';
    echo '<script>$(function(){$(\'#edate'.$i.'\').combodate({minYear:2016,maxYear:2018});});</script>';
    echo '</form>';
 }

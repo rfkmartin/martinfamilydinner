@@ -66,6 +66,7 @@ create table event (
    date_id int not null,
    family_id int not null,
    start_time varchar(4),
+   cancel boolean not null default 0,
    primary key (event_id),
    foreign key (family_id) references family(family_id) on delete cascade,
    foreign key (date_id) references date(date_id) on delete cascade

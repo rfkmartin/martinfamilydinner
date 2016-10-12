@@ -277,41 +277,6 @@ if (isset($_POST['addfood']))
       logger($link,"Error inserting record: " . mysqli_error($link));
    }
 }
-if (isset($_POST['addevent']))
-{
-   //check for valid month year
-   // if day is null set to -1
-   $food=$_POST['food'];
-   $sql = "insert into food(food) values ('".$food."')";
-   logger($link,$sql);
-   if (!mysqli_query($link,$sql))
-   {
-      logger($link,"Error inserting record: " . mysqli_error($link));
-   }
-}
-if (isset($_POST['updateevent']))
-{
-   // check for current date or later
-   $food=$_POST['food'];
-   $sql = "insert into food(food) values ('".$food."')";
-   logger($link,$sql);
-   if (!mysqli_query($link,$sql))
-   {
-      logger($link,"Error inserting record: " . mysqli_error($link));
-   }
-}
-if (isset($_POST['deleteevent']))
-{
-   // do i delete everything associated(attendance, food)
-   // or change year to 1900(eg) and add a note for archival viewing
-   $food=$_POST['food'];
-   $sql = "insert into food(food) values ('".$food."')";
-   logger($link,$sql);
-   if (!mysqli_query($link,$sql))
-   {
-      logger($link,"Error inserting record: " . mysqli_error($link));
-   }
-}
 echo family_ddl($link);
 echo "<br><br>";
 echo family_addnew($link);
@@ -326,7 +291,7 @@ echo add_food($link);
 echo "<br><br>";
 echo print_events($link);
 echo "<br><br>";
-echo add_events($link);
+echo add_events($link,$_POST);
 print "    </td>\n";
 print "    <td valign=\"top\">\n";
 
