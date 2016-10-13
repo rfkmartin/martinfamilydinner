@@ -55,69 +55,57 @@ function draw_calendar($link,$month,$year,$number){
          /* add in the day number */
          //while ($day[$i]<$list_day) $i++;
          //<td width="30px" align="center" class="event"><div class="eventdata">5<span class="eventdatatext">Kate(40)<br>John(46)<br>Sarah(3)</span></div></td>
-         if ($dy[$j]==$list_day&&$thismonth==$mnth[$j])
+         $class="";
+         $dinner="";
+         $bday="";
+         $anniv="";
+         while ($dy[$j]==$list_day&&$thismonth==$mnth[$j])
          {
-            $event="";
-            if ($type[$j]=="e")
+            if ($type[$j]=="e"&&$yr[$j]==$year&&$class=="")
             {
-               if ($yr[$j]==$year)
-               {
-                  $calendar.=" class='event dinner'><div class='eventdata'>".$list_day."<span class='eventdatatext'>";
-                  //$event=" dinner";
-               }
-               else
-               {
-                  $calendar.= ">".$list_day;
-               }
+               $class.=" class='event dinner'><div class='eventdata'>".$list_day."<span class='eventdatatext'>";
             }
-            else
+            elseif ($type[$j]!="e"&&$class=="")
             {
-               $calendar.=" class='event'><div class='eventdata'>".$list_day."<span class='eventdatatext'>";
+               $class.=" class='event'><div class='eventdata'>".$list_day."<span class='eventdatatext'>";
             }
             if ($type[$j]=="e"&&$yr[$j]==$year)
             {
-               $calendar.="<b>Dinner</b><br>";
-               $calendar.=$xtra1[$j]." ".$yr[$j]."<br>";
+               if ($dinner=="")
+               {
+                  $dinner.="<b>Dinner</b><br>";
+               }
+               $dinner.=$xtra1[$j]."<br>";
             }
             if ($type[$j]=="a")
             {
-               $calendar.="<b>Anniversaries</b><br>";
+               if ($anniv=="")
+               {
+                  $anniv.="<b>Anniversaries</b><br>";
+               }
                $age[$j]=$year-$yr[$j];
                $age_visible="(".$age[$j].")";
-               $calendar.=$xtra1[$j].$age_visible."<br>";
+               $anniv.=$xtra1[$j].$age_visible."<br>";
             }
             if ($type[$j]=="b")
             {
-               $calendar.="<b>Birthdays</b><br>";
+               if ($bday=="")
+               {
+                  $bday.="<b>Birthdays</b><br>";
+               }
                $age_visible="";
                $age[$j]=$year-$yr[$j];
                if ($xtra2[$j])
                {
                   $age_visible="(".$age[$j].")";
                }
-               $calendar.= $xtra1[$j].$age_visible."<br>";
+               $bday.= $xtra1[$j].$age_visible."<br>";
             }
             $j++;
-            while ($dy[$j]==$list_day) {
-               if ($type[$j]=="a")
-               {
-                  $age[$j]=$year-$yr[$j];
-                  $age_visible="(".$age[$j].")";
-                  $calendar.=$xtra1[$j].$age_visible."<br>";
-               }
-               if ($type[$j]=="b")
-               {
-                  $age_visible="";
-                  $age[$j]=$year-$yr[$j];
-                  if ($xtra2[$j])
-                  {
-                     $age_visible="(".$age[$j].")";
-                  }
-                  $calendar.= $xtra1[$j].$age_visible."<br>";
-               }
-               $j++;
-            }
-            $calendar.="</span></div>";
+         }
+         if ($class!="")
+         {
+            $calendar.=$class.$dinner.$anniv.$bday."</span></div>";
          }
          else
          {
