@@ -289,9 +289,13 @@ echo member_addnew($link);
 echo "<br><br>";
 echo add_food($link);
 echo "<br><br>";
-echo print_events($link);
-echo "<br><br>";
 echo add_events($link,$_POST);
+echo "<br><br>";
+echo print_events($link,'upcoming');
+echo "<br><br>";
+echo print_events($link,'cancelled');
+echo "<br><br>";
+echo print_events($link,'past');
 print "    </td>\n";
 print "    <td valign=\"top\">\n";
 
