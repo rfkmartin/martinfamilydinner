@@ -151,11 +151,12 @@ function member_addnew($link)
 {
 
    $i=1;
+   $email="bob@sample.com";
    if (!empty($_SESSION['family_id']))
    {
       $sql = "select person_id,first_name,last_name,show_age,day,month,year,birthday_id from person left join date on person.birthday_id=date.date_id where family_id=".$_SESSION['family_id'];
       $data = mysqli_query($link,$sql);
-      echo '<table border="1"><tr><td width="175px">First Name</td><td width="175px">Last Name</td><td width="100px">Show Age?</td><td width="175px">Birthdate</td><td width="75px"></td></tr></table>';
+      echo '<table border="1"><tr><td width="150px">First Name</td><td width="150px">Last Name</td><td width="150px">Email</td><td width="100px">Show Age?</td><td width="175px">Birthdate</td><td width="75px"></td></tr></table>';
       while(list($id,$first,$last,$show,$day,$month,$year,$bdayid) = mysqli_fetch_row($data))
       {
          $show_age="";
@@ -165,8 +166,9 @@ function member_addnew($link)
          }
          echo '<form action = "" method = "post">';
          echo '<table border="1"><tr>';
-         echo '<td width="175px"><input type="text" name="first" value="'.$first.'"></td>';
-         echo '<td width="175px"><input type="text" name="last" value="'.$last.'"></td>';
+         echo '<td width="150px"><input type="text" name="first" size="15" value="'.$first.'"></td>';
+         echo '<td width="150px"><input type="text" name="last" size="15" value="'.$last.'"></td>';
+         echo '<td width="150px"><input type="text" name="email" size="15" value="'.$email.'"></td>';
          echo '<td width="100px"><input type="checkbox" name="show"'.$show_age.'></td>';
          echo '<td width="175px"><input type="text" id="bdate'.$i.'" name="bday" data-format="DD-MM-YYYY" data-template="D MMM YYYY" value="'.sprintf('%02d',$day).'-'.sprintf('%02d',$month).'-'.$year.'"></td>';
          echo '<td width="75px"><input type="hidden" name="bday_id" value="'.$bdayid.'"><input type="hidden" name="family_id" value="'.$_SESSION['family_id'].'"><input type="hidden" name="person_id" value="'.$id.'">';
@@ -178,8 +180,9 @@ function member_addnew($link)
       }
          echo '<form action = "" method = "post">';
          echo '<table border="1"><tr>';
-         echo '<td width="175px"><input type="text" name="first"></td>';
-         echo '<td width="175px"><input type="text" name="last"></td>';
+         echo '<td width="150px"><input type="text" size="15" name="first"></td>';
+         echo '<td width="150px"><input type="text" size="15" name="last"></td>';
+         echo '<td width="150px"><input type="text" size="15" name="email"></td>';
          echo '<td width="100px"><input type="checkbox" name="show"></td>';
          echo '<td width="175px"><input type="text" id="bdate'.$i.'" name="bday" data-format="DD-MM-YYYY" data-template="D MMM YYYY" ></td>';
          echo '<td width="75px"><input type="hidden" name="family_id" value="'.$_SESSION['family_id'].'"><input type="submit" name="editmem" value="Add New"></td></tr>';
