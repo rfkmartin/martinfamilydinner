@@ -269,6 +269,16 @@ function format_phone($phone)
 // print current food options and form to add more
 function add_food($link)
 {
+if (isset($_POST['addfood']))
+   {
+      $food=$_POST['food'];
+      $sql = "insert into food(food) values ('".$food."')";
+      logger($link,$sql);
+      if (!mysqli_query($link,$sql))
+      {
+         logger($link,"Error inserting record: " . mysqli_error($link));
+      }
+   }
    $i=0;
    $sql = "select food from food";
    $data = mysqli_query($link,$sql);

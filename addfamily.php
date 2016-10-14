@@ -207,16 +207,7 @@ if (isset($_POST['change']))
       $_SESSION['family_id']=$_POST['family'];
    }
 }
-if (isset($_POST['addfood']))
-{
-   $food=$_POST['food'];
-   $sql = "insert into food(food) values ('".$food."')";
-   logger($link,$sql);
-   if (!mysqli_query($link,$sql))
-   {
-      logger($link,"Error inserting record: " . mysqli_error($link));
-   }
-}
+
 echo family_ddl($link);
 echo "<br><br>";
 echo family_addnew($link);
