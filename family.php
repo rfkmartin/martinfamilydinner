@@ -46,45 +46,20 @@ function family_table($link)
 	return $calendar;
 }
 
-// print table of family members
-function familymem_table($link)
-{
-   if (empty($_SESSION['family_id']))
-   {
-      return "";
-   }
-   $i=0;
-
-   $sql = "select person_id,first_name,last_name,day,month,year from person join family on person.family_id=family.family_id join date on person.birthday_id=date.date_id where person.family_id=".$_SESSION['family_id'];
-   $data = mysqli_query($link,$sql);
-   while (list($id[$i],$fname[$i],$lname[$i],$day[$i],$month[$i],$year[$i])=mysqli_fetch_row($data)) {
-      $i++;
-   }
-	$calendar = '<table border="1" cellpadding="1" cellspacing="1" class="family_table">';
-
-   $calendar.= '<tr><td>Name</td><td>Birthday</td><td></td></tr>';
-
-   for($x=0;$x<$i;$x++)
-   {
-      $calendar.='<tr><td>'.$fname[$x].' '.$lname[$x].'</td>';
-      if (empty($day[$x]))
-      {
-         $calendar.='<td></td></tr>';
-      }
-      else
-      {
-         $calendar.='<td>'.$month[$x].'/'.$day[$x].'/'.$year[$x].'</td>';
-      }
-      $calendar.='<td><form action = "" method = "post"><input type="hidden" name="family_id" value="'.$id[$x].'"><input type="submit" name="edit" value="Edit"><input type="submit" name="delete" value="Delete"></form></td></tr>';
-   }
-   $calendar.='</table>';
-
-	return $calendar;
-}
-
 // print dropdown list of familes
 function family_ddl($link)
 {
+   if (isset($_POST['change']))
+   {
+      if ($_POST['family']==-1)
+      {
+         $_SESSION['family_id']=NULL;
+      }
+      else
+      {
+         $_SESSION['family_id']=$_POST['family'];
+      }
+   }
    echo '<form action = "" method = "post"><select name="family">';
 
    $sql = "select family_id,name from family";
@@ -105,6 +80,152 @@ function family_ddl($link)
 // print form to add/edit families
 function family_addnew($link)
 {
+   if (isset($_POST['addfamily']))
+   {
+      $name = $_POST['familyname'];
+      $line1 = $_POST['line1'];
+      $line2 = $_POST['line2'];
+      $city = $_POST['city'];
+      $state = $_POST['state'];
+      $zip = $_POST['zip'];
+      $phone =  $_POST['phone'];
+      $anniv = $_POST['anniv'];
+      $annivY = date('Y', strtotime($_POST['anniv']));
+      $annivm = date('m', strtotime($_POST['anniv']));
+      $annivd = date('d', strtotime($_POST['anniv']));
+      // insert address
+      $sql = "insert into address(line1,line2,city,state,zip) values (\"".$line1."\",\"".$line2."\",\"".$city."\",\"".$state."\",\"".$zip."\");";
+      logger($link,$sql);
+      if (!empty($_POST['city']))
+      {
+         if (mysqli_query($link,$sql))
+         {
+            $address_id = mysqli_insert_id($link);
+         }
+         else
+         {
+            logger($link,"Error inserting record: " . mysqli_error($link));
+         }
+      }
+      else
+      {
+         $address_id="NULL";
+      }
+      if (!empty($_POST['anniv']))
+      {
+         // insert anniversary
+         $sql = "insert into date(day,month,year) values (\"".$annivd."\",\"".$annivm."\",\"".$annivY."\");";
+         logger($link,$sql);
+         if (mysqli_query($link,$sql))
+         {
+            $anniv_id = mysqli_insert_id($link);
+         }
+         else
+         {
+            logger($link,"Error inserting record: " . mysqli_error($link));
+         }
+      }
+      else
+      {
+         $anniv_id="NULL";
+      }
+      $sql = "insert into family (name,phone,anniversary_id,address_id) values (\"".$name."\",\"".$phone."\",".$anniv_id.",".$address_id.");";
+      echo $sql;
+      logger($link,$sql);
+      if (mysqli_query($link,$sql))
+      {
+         $selected_family = mysqli_insert_id($link);
+      }
+      else
+      {
+         logger($link,"Error inserting record: " . mysqli_error($link));
+      }
+   }
+   if (isset($_POST['updatefamily']))
+   {
+      $selected_family=$_POST['family_id'];
+      $sql = "select address_id,anniversary_id from family where family_id=".$selected_family;
+      $data = mysqli_query($link,$sql);
+      $add_anniv="";
+      $add_address="";
+      $phone = preg_replace("/[^0-9]/","",$_POST['phone']);
+      list($address_id,$anniversary_id)=mysqli_fetch_row($data);
+      if (empty($address_id))
+      {
+         $sql = "insert into address(line1,line2,city,state,zip) values ('".$_POST['line1']."','".$_POST['line2']."','".$_POST['city']."', '".$_POST['state']."', '".$_POST['zip']."')";
+         logger($link,$sql);
+         if (mysqli_query($link,$sql))
+         {
+            $address_id = mysqli_insert_id($link);
+         }
+         else
+         {
+            logger($link,"Error inserting record: " . mysqli_error($link));
+         }
+      }
+      else
+      {
+         $sql = "update address set line1='".$_POST['line1']."',line2='".$_POST['line2']."',city='".$_POST['city']."',state='".$_POST['state']."',zip='".$_POST['zip']."' where address_id=".$address_id."";
+         logger($link,$sql);
+         if (!mysqli_query($link,$sql))
+         {
+            logger($link,"Error updating record: " . mysqli_error($link));
+         }
+      }
+
+      if (!empty($_POST['anniv']))
+      {
+         $annivY = date('Y', strtotime($_POST['anniv']));
+         $annivm = date('m', strtotime($_POST['anniv']));
+         $annivd = date('d', strtotime($_POST['anniv']));
+         if (empty($anniversary_id))
+         {
+            $sql = "insert into date(day,month,year) values ('".$annivd."','".$annivm."','".$annivY."')";
+            logger($link,$sql);
+            if (!empty($_POST['anniv']))
+            {
+               if (mysqli_query($link,$sql))
+               {
+                  $anniversary_id = mysqli_insert_id($link);
+               }
+               else
+               {
+                  logger($link,"Error inserting record: " . mysqli_error($link));
+               }
+            }
+         }
+         else
+         {
+            $sql = "update date set day='".$annivd."',month='".$annivm."',year='".$annivY."' where date_id=".$anniversary_id."";
+            logger($link,$sql);
+            if (!mysqli_query($link,$sql))
+            {
+               echo "Error updating record: " . mysqli_error($link);
+            }
+         }
+      }
+      if (!empty($address_id))
+      {
+         $add_address=",address_id='".$address_id."'";
+      }
+      if (!empty($anniversary_id))
+      {
+         if (!empty($_POST['anniv']))
+         {
+            $add_anniv=",anniversary_id='".$anniversary_id."'";
+         }
+         else
+         {
+            $add_anniv=",anniversary_id=NULL";
+         }
+      }
+      $sql = "update family set name='".$_POST['familyname']."'".$add_address.$add_anniv.",phone='".$phone."' where family_id=".$selected_family."";
+      logger($link,$sql);
+      if (!mysqli_query($link,$sql))
+      {
+         logger($link,"Error updating record: " . mysqli_error($link));
+      }
+   }
    echo '<form action = "" method = "post">';
 
    if (!empty($_SESSION['family_id']))
@@ -266,13 +387,102 @@ function format_phone($phone)
       return '('.substr($phone,0,3).') '.substr($phone,3,3).'-'.substr($phone,6,4);
    }
 }
+// print ddl of upcoming events and checkboxes of possible foods
+function add_food_to_event($link)
+{
+   $error="";
+   if (isset($_POST['changeevent']))
+   {
+      if ($_POST['event']==-1)
+      {
+         $_SESSION['event']=-1;
+         $error='<br><font color="red">You must select an event.</font>';
+      }
+      else
+      {
+         $_SESSION['event']=$_POST['event'];
+      }
+   }
+   if (isset($_POST['addfoodtoevent']))
+   {
+      if (isset($_POST['foods']))
+      {
+         if ($_POST['event']==-1)
+         {
+            $error='<br><font color="red">You must select an event.</font>';
+         }
+         else
+         {
+            //remove old associations
+            $sql = "delete from food_for_event where event_id=".$_POST['event'];
+            logger($link,$sql);
+            if (!mysqli_query($link,$sql))
+            {
+               logger($link,"Error deleting record: " . mysqli_error($link));
+            }
+            $foodArray = $_POST['foods'];
+            for ($i=0; $i<count($foodArray); $i++)
+            {
+               $sql = "insert into food_for_event(event_id,food_id) values (".$_POST['event'].",".$foodArray[$i].")";
+               logger($link,$sql);
+               if (!mysqli_query($link,$sql))
+               {
+                 logger($link,"Error inserting record: " . mysqli_error($link));
+               }
+            }
+         }
+      }
+   }
+   echo $error;
+   echo '<form action = "" method = "post"><table border="1"><tr><td valign="top"><select name="event">';
+   echo '<option value="-1">Select Event</option>';
+
+   $sql = "select * from (select f.name,e.event_id,d.month,d.year,str_to_date(concat(concat(month,'/',greatest(day,1)),'/',year),'%m/%d/%Y') dt from date d join event e on d.date_id=e.date_id join family f on f.family_id=e.family_id where e.cancel=0) as a where a.dt>curdate()";
+   $data = mysqli_query($link,$sql);
+   while (list($fam_name,$event_id,$month,$year,$date)=mysqli_fetch_row($data))
+   {
+      echo '<option value="'.$event_id.'"';
+      if ($event_id==$_SESSION['event'])
+      {
+         echo ' selected';
+      }
+      echo '>'.date("M",strtotime($date)).' '.date("Y",strtotime($date)).'--'.$fam_name.'</option>'."\n";
+   }
+   echo '</select><input type="submit" name="changeevent" value="Change Event"></td><td><table border="1">';
+   $sql = "select f.food_id,food,event_id from food f left join (select * from food_for_event where event_id=".$_SESSION['event'].") as e on f.food_id=e.food_id order by f.food_id";
+   $data = mysqli_query($link,$sql);
+   $i=0;
+   while (list($food_id,$food,$selected)=mysqli_fetch_row($data))
+   {
+      $checked='';
+      if (!empty($selected))
+      {
+         $checked=' checked';
+      }
+      if ($i==0)
+      {
+         echo '<tr><td align="left"><input type="checkbox" name="foods[]" value='.$food_id.$checked.'>'.$food.'</td>';
+      }
+      else
+      {
+         echo '<td align="left"><input type="checkbox" name="foods[]" value='.$food_id.$checked.'>'.$food.'</td></tr>';
+      }
+      $i=1-$i;
+   }
+   if ($i==1)
+   {
+      echo '<td align="left"></td></tr>';
+   }
+   echo '</table><input type="submit" name="addfoodtoevent" value="Update">';
+   echo '</td></tr></table></form>';
+}
 // print current food options and form to add more
 function add_food($link)
 {
-if (isset($_POST['addfood']))
+   if (isset($_POST['addfood']))
    {
-      $food=$_POST['food'];
-      $sql = "insert into food(food) values ('".$food."')";
+      $addfood=$_POST['food'];
+      $sql = "insert into food(food) values ('".$addfood."')";
       logger($link,$sql);
       if (!mysqli_query($link,$sql))
       {
@@ -307,7 +517,7 @@ if (isset($_POST['addfood']))
    }
    $calendar.='</table><br>';
    $calendar.='<form action = "" method = "post">';
-   $calendar.='<table><td><td>Add New Food</td><td><input type="text" name="food"><input type="submit" name="addfood" value="Add"></td></table>';
+   $calendar.='<table><tr><td>Add New Food</td><td><input type="text" name="food"><input type="submit" name="addfood" value="Add"></td></tr></table>';
    $calendar.='</form>';
    return $calendar;
 }
@@ -440,27 +650,13 @@ function add_events($link)
          }
       }
    }
-   if (isset($_POST['deleteevent']))
-   {
-      // do i delete everything associated(attendance, food)
-      // or change year to 1900(eg) and add a note for archival viewing
-      // or add a cancelled field?
-      $e_id=$_POST['e_id'];
-      $sql = 'update date d join event e on d.date_id=e.date_id set year=1900 where e.event_id='.$e_id;
-      logger($link,$sql);
-      if (!mysqli_query($link,$sql))
-      {
-         logger($link,"Error inserting record: " . mysqli_error($link));
-      }
-   }
-
    echo $error;
    echo '<table border="1"><tr>';
    echo '<td width="175px"><b>Family</b></td>';
    echo '<td width="175px"><b>Tentative Date</b></td>';
    echo '<td width="175px"><b>Solid Date</b></td>';
-   echo '<td width="50px"><b><b>Cancel</b></b></td>';
-   echo '<td width="175px"></td></tr></table>';
+   echo '<td width="60px"><b><b>Cancel</b></b></td>';
+   echo '<td width="100px"></td></tr></table>';
    $sql = "select * from (select e.event_id,f.name,e.family_id,d.month,d.day,d.year,str_to_date(concat(concat(month,'/',greatest(day,1)),'/',year),'%m/%d/%Y') dt from date d join event e on d.date_id=e.date_id join family f on f.family_id=e.family_id where e.cancel=0) as a where a.dt>curdate()";
    logger($link,$sql);
    $data = mysqli_query($link,$sql);
@@ -484,8 +680,8 @@ function add_events($link)
       echo '<td width="175px">'.$ddl.'</td>';
       echo '<td width="175px"><input type="text" id="etdate'.$i.'" name="etday" data-format="YYYY-MM" data-template="MMM YYYY" value="'.$year.'-'.sprintf('%02d',$month).'"></td>';
       echo '<td width="175px"><input type="text" id="edate'.$i.'" name="eday" data-format="DD-MM-YYYY" data-template="D MMM YYYY" value="'.sprintf('%02d',$day).'-'.sprintf('%02d',$month).'-'.$year.'"></td>';
-      echo '<td width="50px"><input type="checkbox" name="cancel"></td>';
-      echo '<td width="175px"><input type="hidden" name="e_id" value="'.$e_id.'">';
+      echo '<td width="60px"><input type="checkbox" name="cancel"></td>';
+      echo '<td width="100px"><input type="hidden" name="e_id" value="'.$e_id.'">';
       echo '<input type="submit" name="updateevent" value="Update">';
       echo '</td></tr></table>';
       echo '<script>$(function(){$(\'#etdate'.$i.'\').combodate({minYear:2016,maxYear:2018});});</script>';
@@ -507,8 +703,8 @@ function add_events($link)
    echo '<td width="175px">'.$ddl.'</td>';
    echo '<td width="175px"><input type="text" id="etdate'.$i.'" name="etday" data-format="YYYY-MM" data-template="MMM YYYY"></td>';
    echo '<td width="175px"><input type="text" id="edate'.$i.'" name="eday" data-format="DD-MM-YYYY" data-template="D MMM YYYY"></td>';
-   echo '<td width="50px"></td>';
-   echo '<td width="175px">';
+   echo '<td width="60px"></td>';
+   echo '<td width="100px">';
    echo '<input type="submit" name="addevent" value="Add New">';
    echo '</td></tr></table>';
    echo '<script>$(function(){$(\'#etdate'.$i.'\').combodate({minYear:2016,maxYear:2018});});</script>';

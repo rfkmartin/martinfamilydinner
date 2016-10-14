@@ -78,8 +78,18 @@ create table user (
    username varchar(64) not null,
    passcode varchar(255) not null,
    family_id int not null,
+   is_admin boolean not null default 0,
    primary key (user_id),
    foreign key (family_id) references family(family_id) on delete cascade
+);
+
+create table food_for_event (
+   event_food_id int not null auto_increment,
+   event_id int not null,
+   food_id int not null,
+   primary key(event_food_id),
+   foreign key (event_id) references event(event_id),
+   foreign key (food_id) references food(food_id)
 );
 
 -- Sarah
@@ -187,7 +197,7 @@ insert into person(person_id,first_name,last_name,family_id,birthday_id,show_age
 insert into person(person_id,first_name,last_name,family_id,birthday_id,show_age) values (24,'Bobby','Martin',7,24,true);
 
 -- abc123/
-insert into user(user_id,username,passcode,family_id) values (1,'rfkmartin@gmail.com','$2y$10$Wq/fWFdJRfbV1u8O1Hh/UO2R2kWht3XNowsCVbE5DV3V9zvMkFrIW',7);
+insert into user(user_id,username,passcode,is_admin,family_id) values (1,'rfkmartin@gmail.com','$2y$10$Wq/fWFdJRfbV1u8O1Hh/UO2R2kWht3XNowsCVbE5DV3V9zvMkFrIW',1,7);
 
 insert into event(event_id,date_id,family_id) values (1,26,7);
 insert into event(event_id,date_id,family_id) values (2,27,9);
