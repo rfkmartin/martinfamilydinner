@@ -53,6 +53,7 @@ create table person (
    person_id int not null auto_increment,
    first_name varchar(32) not null,
    last_name varchar(32) not null,
+   email varchar(64),
    family_id int not null,
    birthday_id int,
    show_age bool,

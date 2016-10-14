@@ -149,15 +149,74 @@ function family_addnew($link)
 // print form to add/edit members
 function member_addnew($link)
 {
-
+   if (isset($_POST['editmem']))
+   {
+      $first = $_POST['first'];
+      $last = $_POST['last'];
+      $email = $_POST['email'];
+      (isset($_POST['show']))?$show = $_POST['show']:$show = "off";
+      $bday = $_POST['bday'];
+      (isset($_POST['bday_id']))?$bday_id = $_POST['bday_id']:$bday_id = 0;
+      $family_id = $_POST['family_id'];
+      (isset($_POST['person_id']))?$member_id = $_POST['person_id']:$member_id = 0;
+      $bdayY = date('Y', strtotime($_POST['bday']));
+      $bdaym = date('m', strtotime($_POST['bday']));
+      $bdayd = date('d', strtotime($_POST['bday']));
+      if ($show=="on")
+      {
+         $show=1;
+      }
+      else
+      {
+         $show=0;
+      }
+      // insert or edit bday
+      if ($member_id==0)
+      {
+         $sql = "insert into date(day,month,year) values ('".$bdayd."','".$bdaym."','".$bdayY."')";
+         logger($link,$sql);
+         if (mysqli_query($link,$sql))
+         {
+            $bday_id = mysqli_insert_id($link);
+         }
+         else
+         {
+            logger($link,"Error inserting record: " . mysqli_error($link));
+         }
+         $sql = "insert into person(first_name,last_name,email,family_id,birthday_id,show_age) values ('".$first."','".$last."','".$email."','".$family_id."','".$bday_id."','".$show."')";
+         logger($link,$sql);
+         if (mysqli_query($link,$sql))
+         {
+            $bday_id = mysqli_insert_id($link);
+         }
+         else
+         {
+            logger($link,"Error inserting record: " . mysqli_error($link));
+         }
+      }
+      else
+      {
+         $sql = "update person set first_name='".$first."',last_name='".$last."',email='".$email."',show_age='".$show."' where person_id=".$member_id;
+         logger($link,$sql);
+         if (!mysqli_query($link,$sql))
+         {
+            logger($link,"Error updating record: " . mysqli_error($link));
+         }
+         $sql = "update date set day='".$bdayd."',month='".$bdaym."',year='".$bdayY."' where date_id=".$bday_id;
+         logger($link,$sql);
+         if (!mysqli_query($link,$sql))
+         {
+            logger($link,"Error updating record: " . mysqli_error($link));
+         }
+      }
+   }
    $i=1;
-   $email="bob@sample.com";
    if (!empty($_SESSION['family_id']))
    {
-      $sql = "select person_id,first_name,last_name,show_age,day,month,year,birthday_id from person left join date on person.birthday_id=date.date_id where family_id=".$_SESSION['family_id'];
+      $sql = "select person_id,first_name,last_name,email,show_age,day,month,year,birthday_id from person left join date on person.birthday_id=date.date_id where family_id=".$_SESSION['family_id'];
       $data = mysqli_query($link,$sql);
       echo '<table border="1"><tr><td width="150px">First Name</td><td width="150px">Last Name</td><td width="150px">Email</td><td width="100px">Show Age?</td><td width="175px">Birthdate</td><td width="75px"></td></tr></table>';
-      while(list($id,$first,$last,$show,$day,$month,$year,$bdayid) = mysqli_fetch_row($data))
+      while(list($id,$first,$last,$email,$show,$day,$month,$year,$bdayid) = mysqli_fetch_row($data))
       {
          $show_age="";
          if ($show==1)
