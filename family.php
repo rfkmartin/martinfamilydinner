@@ -476,6 +476,23 @@ function add_food_to_event($link)
    echo '</table><input type="submit" name="addfoodtoevent" value="Update">';
    echo '</td></tr></table></form>';
 }
+//mysql> select f.food_id,food,e.event_id,fa.name from food f left join (select *
+// from food_for_event where event_id=2) as e on f.food_id=e.food_id left join ev
+//ent ev on e.event_id=ev.event_id left join bringing b on b.event_id=ev.event_id
+// left join family fa on fa.family_id=b.family_id order by f.food_id;
+//+---------+-------------+----------+------+
+//| food_id | food        | event_id | name |
+//+---------+-------------+----------+------+
+//|       1 | main course |        2 | NULL |
+//|       2 | red wine    |     NULL | NULL |
+//|       3 | white wine  |        2 | NULL |
+//|       4 | beer        |     NULL | NULL |
+//|       5 | salad       |        2 | NULL |
+//|       6 | dessert     |     NULL | NULL |
+//|       7 | fruit       |     NULL | NULL |
+//|       8 | veggies     |     NULL | NULL |
+//|       9 | juice boxes |     NULL | NULL |
+//+---------+-------------+----------+------+
 // print current food options and form to add more
 function add_food($link)
 {

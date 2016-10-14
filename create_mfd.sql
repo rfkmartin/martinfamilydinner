@@ -45,8 +45,8 @@ create table family (
    anniversary_id int,
    primary key (family_id),
    unique (name),
-   foreign key (address_id) references address(address_id) on delete cascade,
-   foreign key (anniversary_id) references date(date_id) on delete cascade
+   foreign key (address_id) references address(address_id),
+   foreign key (anniversary_id) references date(date_id)
 );
 
 create table person (
@@ -59,7 +59,7 @@ create table person (
    show_age bool,
    primary key (person_id),
    foreign key (family_id) references family(family_id) on delete cascade,
-   foreign key (birthday_id) references date(date_id) on delete cascade
+   foreign key (birthday_id) references date(date_id)
 );
 
 create table event (
@@ -69,8 +69,8 @@ create table event (
    start_time varchar(4),
    cancel boolean not null default 0,
    primary key (event_id),
-   foreign key (family_id) references family(family_id) on delete cascade,
-   foreign key (date_id) references date(date_id) on delete cascade
+   foreign key (family_id) references family(family_id),
+   foreign key (date_id) references date(date_id)
 );
 
 create table user (
@@ -90,6 +90,17 @@ create table food_for_event (
    primary key(event_food_id),
    foreign key (event_id) references event(event_id),
    foreign key (food_id) references food(food_id)
+);
+
+create table bringing (
+   bringing_id int not null auto_increment,
+   event_id int not null,
+   family_id int not null,
+   event_food_id int not null,
+   primary key (bringing_id),
+   foreign key (event_id) references event(event_id),
+   foreign key (family_id) references family(family_id),
+   foreign key (event_food_id) references food_for_event(event_food_id)   
 );
 
 -- Sarah
