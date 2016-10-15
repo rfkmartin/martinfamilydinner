@@ -92,6 +92,14 @@ create table food_for_event (
    foreign key (food_id) references food(food_id)
 );
 
+create table attending (
+   event_id int not null,
+   person_id int not null,
+   primary key (event_id,person_id),
+   foreign key (event_id) references event(event_id),
+   foreign key (person_id) references person(person_id)
+);
+
 create table bringing (
    event_id int not null,
    family_id int not null,

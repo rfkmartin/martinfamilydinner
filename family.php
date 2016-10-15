@@ -489,23 +489,6 @@ function add_food_to_event($link)
    echo '</table><input type="submit" name="addfoodtoevent" value="Update">';
    echo '</td></tr></table></form>';
 }
-//mysql> select f.food_id,food,e.event_id,fa.name from food f left join (select *
-// from food_for_event where event_id=2) as e on f.food_id=e.food_id left join ev
-//ent ev on e.event_id=ev.event_id left join bringing b on b.event_id=ev.event_id
-// left join family fa on fa.family_id=b.family_id order by f.food_id;
-//+---------+-------------+----------+------+
-//| food_id | food        | event_id | name |
-//+---------+-------------+----------+------+
-//|       1 | main course |        2 | NULL |
-//|       2 | red wine    |     NULL | NULL |
-//|       3 | white wine  |        2 | NULL |
-//|       4 | beer        |     NULL | NULL |
-//|       5 | salad       |        2 | NULL |
-//|       6 | dessert     |     NULL | NULL |
-//|       7 | fruit       |     NULL | NULL |
-//|       8 | veggies     |     NULL | NULL |
-//|       9 | juice boxes |     NULL | NULL |
-//+---------+-------------+----------+------+
 // print current food options and form to add more
 function add_food($link)
 {
@@ -587,10 +570,11 @@ function print_events($link,$type)
       $cancelled='';
    }
    echo '<h2>'.$title.'</h2>';
-   $sql = "select * from (select f.name,e.family_id,ad.line1,ad.city,ad.state,d.month,d.day,d.year,str_to_date(concat(concat(month,'/',greatest(day,1)),'/',year),'%m/%d/%Y') dt from date d join event e on d.date_id=e.date_id join family f on f.family_id=e.family_id join address ad on ad.address_id=f.address_id".$cancelled.") as a where a.dt".$timearrow."curdate()";
+   $sql = "select * from (select e.event_id,f.name,e.family_id,ad.line1,ad.city,ad.state,d.month,d.day,d.year,str_to_date(concat(concat(month,'/',greatest(day,1)),'/',year),'%m/%d/%Y') dt from date d join event e on d.date_id=e.date_id join family f on f.family_id=e.family_id join address ad on ad.address_id=f.address_id".$cancelled.") as a where a.dt".$timearrow."curdate()";
    logger($link,$sql);
    $data = mysqli_query($link,$sql);
-   while (list($fam_name,$fam_id,$line1,$city,$state,$month,$day,$year,$date)=mysqli_fetch_row($data)) {
+   while (list($event_id,$fam_name,$fam_id,$line1,$city,$state,$month,$day,$year,$date)=mysqli_fetch_row($data))
+   {
       echo '<table border="1"><tr><td colspan="2">';
       echo '<b>'.date("F",strtotime($date)).' '.$year.'</b><br><b>Host:</b> '.$fam_name.'<br><b>Date:</b>';
       if ($day<1)
@@ -603,13 +587,24 @@ function print_events($link,$type)
       }
       echo '<br><b>Time:</b> 4pm';
       echo '<br><b>Location:</b> '.$line1.' '.$city.', '.$state.'</td></tr>';
-      echo '<tr><td valign="top" width="50%"><table border="1"><tr><td colspan="2"><b>Dishes</b></td></tr>';
-      echo '<tr><td valign="top"><b>Martinopoulos</b></td><td>main course</td></tr>';
-      echo '<tr><td valign="top"><b>Jefferson Martin Family</b></td><td>pasta salad</td></tr>';
-      echo '<tr><td valign="top"><b>Bill Martin Family</b></td><td>white wine</td></tr>';
-      echo '<tr><td valign="top"><b>Eide Family</b></td><td>veggie tray</td></tr>';
+      echo '<tr><td valign="top" width="50%"><table border="1" width="100%"><tr><td colspan="2"><b>Dishes</b></td></tr>';
+      $sql1 = 'select food,e.event_id,fa.name from food f left join (select * from food_for_event where event_id='.$event_id.' and on_menu=1) as e on f.food_id=e.food_id left join event ev on e.event_id=ev.event_id left join bringing b on b.event_id=ev.event_id left join family fa on fa.family_id=b.family_id order by f.food_id';
+      logger($link,$sql1);
+      $data1 = mysqli_query($link,$sql1);
+      while (list($food,$on_menu,$family_name)=mysqli_fetch_row($data1))
+      {
+         if ($on_menu!="")
+         {
+            echo '<tr><td width="67%">';
+            if ($family_name!="")
+            {
+               echo '<b>'.$family_name.'</b>';
+            }
+            echo '</td><td>'.$food.'</td></tr>';
+         }
+      }
       echo '</table></td><td valign="top">';
-      echo '<table border="1><tr><td colspan="2"><b>Attending</b></td></tr>';
+      echo '<table border="1"><tr><td colspan="2"><b>Attending</b></td></tr>';
       echo '<tr><td valign="top"><b>Martinopoulos</b></td><td>Rob<br>Steph<br>Stevie<br>Bobby<br>Teddy<br></td></tr>';
       echo '<tr><td valign="top"><b>Jefferson Martin Family</b></td><td>Patrick<br><Rebecca<br><Finn<br>Brigit</td></tr>';
       echo '<tr><td valign="top"><b>Bill Martin Family</b></td><td>Bill<br>Maripat</td></tr>';
