@@ -390,7 +390,12 @@ function format_phone($phone)
 // print ddl of upcoming events and checkboxes of possible foods
 function add_food_to_event($link)
 {
-   $_SESSION['foods']=9;
+   if (empty($_SESSION['foods']))
+   {
+      $_SESSION['foods']=9;
+      $_SESSION['events']=3;
+      $_SESSION['event']=-1;
+   }
    $error="";
    if (isset($_POST['changeevent']))
    {
@@ -513,7 +518,20 @@ function add_food($link)
       {
          logger($link,"Error inserting record: " . mysqli_error($link));
       }
-      //todo: get inserted food and add a row for each event
+      else
+      {
+         $food_id = mysqli_insert_id($link);
+      }
+      $_SESSION['foods']++;
+      for ($j=1;$j<=$_SESSION['events'];$j++)
+      {
+         $sql = "insert into food_for_event(event_id,food_id) values (".$j.",".$food_id.")";
+         logger($link,$sql);
+         if (!mysqli_query($link,$sql))
+         {
+            logger($link,"Error inserting record: " . mysqli_error($link));
+         }
+      }
    }
    $i=0;
    $sql = "select food from food";
@@ -635,7 +653,21 @@ function add_events($link)
       {
          logger($link,"Error inserting record: " . mysqli_error($link));
       }
+      else
+      {
+         $event_id = mysqli_insert_id($link);
+      }
       //todo:get inserted event and add to food_for_event
+      $_SESSION['events']++;
+      for ($j=1;$j<=$_SESSION['foods'];$j++)
+      {
+         $sql = "insert into food_for_event(event_id,food_id) values (".$event_id.",".$j.")";
+         logger($link,$sql);
+         if (!mysqli_query($link,$sql))
+         {
+            logger($link,"Error inserting record: " . mysqli_error($link));
+         }
+      }
    }
    if (isset($_POST['updateevent']))
    {
