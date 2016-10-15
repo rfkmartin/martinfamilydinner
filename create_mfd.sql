@@ -84,23 +84,22 @@ create table user (
 );
 
 create table food_for_event (
-   event_food_id int not null auto_increment,
    event_id int not null,
    food_id int not null,
-   primary key(event_food_id),
+   on_menu boolean not null default 0,
+   primary key(event_id,food_id),
    foreign key (event_id) references event(event_id),
    foreign key (food_id) references food(food_id)
 );
 
 create table bringing (
-   bringing_id int not null auto_increment,
    event_id int not null,
    family_id int not null,
-   event_food_id int not null,
-   primary key (bringing_id),
+   food_id int not null,
+   primary key (event_id,family_id),
    foreign key (event_id) references event(event_id),
-   foreign key (family_id) references family(family_id),
-   foreign key (event_food_id) references food_for_event(event_food_id)   
+   foreign key (food_id) references food(food_id),
+   foreign key (family_id) references family(family_id)
 );
 
 -- Sarah
@@ -223,3 +222,31 @@ insert into food(food_id,food) values (6,'dessert');
 insert into food(food_id,food) values (7,'fruit');
 insert into food(food_id,food) values (8,'veggies');
 insert into food(food_id,food) values (9,'juice boxes');
+
+insert into food_for_event(event_id,food_id,on_menu) values (1,1,1);
+insert into food_for_event(event_id,food_id,on_menu) values (1,2,1);
+insert into food_for_event(event_id,food_id,on_menu) values (1,3,1);
+insert into food_for_event(event_id,food_id) values (1,4);
+insert into food_for_event(event_id,food_id) values (1,5);
+insert into food_for_event(event_id,food_id) values (1,6);
+insert into food_for_event(event_id,food_id,on_menu) values (1,7,1);
+insert into food_for_event(event_id,food_id) values (1,8);
+insert into food_for_event(event_id,food_id) values (1,9);
+insert into food_for_event(event_id,food_id) values (2,1);
+insert into food_for_event(event_id,food_id) values (2,2);
+insert into food_for_event(event_id,food_id) values (2,3);
+insert into food_for_event(event_id,food_id) values (2,4);
+insert into food_for_event(event_id,food_id) values (2,5);
+insert into food_for_event(event_id,food_id) values (2,6);
+insert into food_for_event(event_id,food_id) values (2,7);
+insert into food_for_event(event_id,food_id) values (2,8);
+insert into food_for_event(event_id,food_id) values (2,9);
+insert into food_for_event(event_id,food_id) values (3,1);
+insert into food_for_event(event_id,food_id) values (3,2);
+insert into food_for_event(event_id,food_id) values (3,3);
+insert into food_for_event(event_id,food_id) values (3,4);
+insert into food_for_event(event_id,food_id) values (3,5);
+insert into food_for_event(event_id,food_id) values (3,6);
+insert into food_for_event(event_id,food_id) values (3,7);
+insert into food_for_event(event_id,food_id) values (3,8);
+insert into food_for_event(event_id,food_id) values (3,9);

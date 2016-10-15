@@ -390,6 +390,7 @@ function format_phone($phone)
 // print ddl of upcoming events and checkboxes of possible foods
 function add_food_to_event($link)
 {
+   $_SESSION['foods']=9;
    $error="";
    if (isset($_POST['changeevent']))
    {
@@ -413,21 +414,28 @@ function add_food_to_event($link)
          }
          else
          {
-            //remove old associations
-            $sql = "delete from food_for_event where event_id=".$_POST['event'];
-            logger($link,$sql);
-            if (!mysqli_query($link,$sql))
-            {
-               logger($link,"Error deleting record: " . mysqli_error($link));
-            }
             $foodArray = $_POST['foods'];
-            for ($i=0; $i<count($foodArray); $i++)
+            $j=0;
+            for ($i=1; $i<=$_SESSION['foods']; $i++)
             {
-               $sql = "insert into food_for_event(event_id,food_id) values (".$_POST['event'].",".$foodArray[$i].")";
-               logger($link,$sql);
-               if (!mysqli_query($link,$sql))
+               if ($j<count($foodArray)&&$foodArray[$j]==$i)
                {
-                 logger($link,"Error inserting record: " . mysqli_error($link));
+                  $sql = "update food_for_event set on_menu=1 where event_id=".$_POST['event']." and food_id=".$i;
+                  $j++;
+                  logger($link,$sql);
+                  if (!mysqli_query($link,$sql))
+                  {
+                    logger($link,"Error inserting record: " . mysqli_error($link));
+                  }
+               }
+               else
+               {
+                  $sql = "update food_for_event set on_menu=0 where event_id=".$_POST['event']." and food_id=".$i;
+                  logger($link,$sql);
+                  if (!mysqli_query($link,$sql))
+                  {
+                    logger($link,"Error inserting record: " . mysqli_error($link));
+                  }
                }
             }
          }
@@ -449,7 +457,7 @@ function add_food_to_event($link)
       echo '>'.date("M",strtotime($date)).' '.date("Y",strtotime($date)).'--'.$fam_name.'</option>'."\n";
    }
    echo '</select><input type="submit" name="changeevent" value="Change Event"></td><td><table border="1">';
-   $sql = "select f.food_id,food,event_id from food f left join (select * from food_for_event where event_id=".$_SESSION['event'].") as e on f.food_id=e.food_id order by f.food_id";
+   $sql = "select f.food_id,food,on_menu from food f left join (select * from food_for_event where event_id=".$_SESSION['event'].") as e on f.food_id=e.food_id order by f.food_id";
    $data = mysqli_query($link,$sql);
    $i=0;
    while (list($food_id,$food,$selected)=mysqli_fetch_row($data))
@@ -505,6 +513,7 @@ function add_food($link)
       {
          logger($link,"Error inserting record: " . mysqli_error($link));
       }
+      //todo: get inserted food and add a row for each event
    }
    $i=0;
    $sql = "select food from food";
@@ -626,6 +635,7 @@ function add_events($link)
       {
          logger($link,"Error inserting record: " . mysqli_error($link));
       }
+      //todo:get inserted event and add to food_for_event
    }
    if (isset($_POST['updateevent']))
    {
