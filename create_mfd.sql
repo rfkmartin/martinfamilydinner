@@ -87,9 +87,11 @@ create table food_for_event (
    event_id int not null,
    food_id int not null,
    on_menu boolean not null default 0,
+   family_id int,
    primary key(event_id,food_id),
    foreign key (event_id) references event(event_id),
-   foreign key (food_id) references food(food_id)
+   foreign key (food_id) references food(food_id),
+   foreign key (family_id) references family(family_id)
 );
 
 create table attending (

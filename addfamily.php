@@ -65,6 +65,8 @@ echo add_food_to_event($link);
 echo "<br><br>";
 echo add_attendance($link);
 echo "<br><br>";
+echo bringing($link);
+echo "<br><br>";
 echo add_events($link);
 echo "<br><br>";
 echo print_events($link,'upcoming');

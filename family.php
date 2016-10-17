@@ -448,6 +448,7 @@ function add_food_to_event($link)
          }
       }
    }
+   echo '<h2>Add Food to Event</h2>';
    echo $error;
    echo '<form action = "" method = "post"><table border="1"><tr><td valign="top"><select name="event">';
    echo '<option value="-1">Select Event</option>';
@@ -519,6 +520,7 @@ function add_food($link)
          }
       }
    }
+   echo '<h2>Add Food to List</h2>';
    $i=0;
    $sql = "select food from food";
    $data = mysqli_query($link,$sql);
@@ -551,7 +553,7 @@ function add_food($link)
    $calendar.='</form>';
    return $calendar;
 }
-// print current food options and form to add more
+// print current family members and select for attending selected event
 function add_attendance($link)
 {
    if (isset($_POST['addpersonevent']))
@@ -584,21 +586,65 @@ function add_attendance($link)
          }
       }
    }
-   echo '<form action = "" method = "post"><table border="1">';
-   $sql = "select p.person_id,first_name,coming from person p join family f on p.family_id=f.family_id join attending a on p.person_id=a.person_id where f.family_id=".$_SESSION['family_id'].' and a.event_id='.$_SESSION['event'];
-   $data = mysqli_query($link,$sql);
-   logger($link,$sql);
-   while (list($person_id,$firstname,$coming)=mysqli_fetch_row($data))
+   echo '<h2>Attending</h2>';
+   if (!empty($_SESSION['family_id'])&&!empty($_SESSION['event']))
    {
-      $checked='';
-      if (!empty($coming))
+      echo '<form action = "" method = "post"><table border="1">';
+      $sql = "select p.person_id,first_name,coming from person p join family f on p.family_id=f.family_id join attending a on p.person_id=a.person_id where f.family_id=".$_SESSION['family_id'].' and a.event_id='.$_SESSION['event'];
+      $data = mysqli_query($link,$sql);
+      logger($link,$sql);
+      while (list($person_id,$firstname,$coming)=mysqli_fetch_row($data))
       {
-         $checked=' checked';
+         $checked='';
+         if (!empty($coming))
+         {
+            $checked=' checked';
+         }
+         echo '<tr><td><input type="checkbox" name="persons[]" value='.$person_id.$checked.'>'.$firstname.'</td></tr>';
       }
-      echo '<tr><td><input type="checkbox" name="persons[]" value='.$person_id.$checked.'>'.$firstname.'</td></tr>';
+      echo '<tr><td><input type="submit" name="addpersonevent" value="Update"></td></tr></table>';
+      echo '</form>';
    }
-   echo '<tr><td><input type="submit" name="addpersonevent" value="Update"></td></tr></table>';
-   echo '</form>';
+}
+// print unselected foods for event
+function bringing($link)
+{
+   if (isset($_POST['bringingfood']))
+   {
+      $food_id=$_POST['bringing'];
+      $sql = 'update food_for_event set family_id='.$_SESSION['family_id'].' where food_id='.$food_id.' and event_id='.$_SESSION['event'];
+      logger($link,$sql);
+      if (!mysqli_query($link,$sql))
+      {
+         logger($link,"Error inserting record: " . mysqli_error($link));
+      }
+   }
+   echo '<h2>Bringing</h2>';
+   if (!empty($_SESSION['family_id'])&&!empty($_SESSION['event']))
+   {
+      // check to make sure at least one family member is attending
+      $sql = 'select sum(coming) from attending a join person p on p.person_id=a.person_id where a.event_id='.$_SESSION['event'].' and p.family_id='.$_SESSION['family_id'];
+      $data = mysqli_query($link,$sql);
+      logger($link,$sql);
+      if (mysqli_fetch_row($data))
+      {
+         echo '<form action = "" method = "post"><table border="1">';
+         $sql = 'select f.food_id,family_id,food from food_for_event ff join food f on ff.food_id=f.food_id where event_id='.$_SESSION['event'].' and on_menu=1 and (family_id='.$_SESSION['family_id'].' or family_id is null)';
+         $data = mysqli_query($link,$sql);
+         logger($link,$sql);
+         while (list($food_id,$family_id,$food)=mysqli_fetch_row($data))
+         {
+            $checked='';
+            if ($family_id==$_SESSION['family_id'])
+            {
+               $checked=' checked';
+            }
+            echo '<tr><td><input type="radio" name="bringing" value='.$food_id.$checked.'>'.$food.'</td></tr>';
+         }
+         echo '<tr><td><input type="submit" name="bringingfood" value="Update"></td></tr></table>';
+         echo '</form>';
+      }
+   }
 }
 // print all upcoming events with food and attendance
 function print_events($link,$type)
@@ -640,7 +686,7 @@ function print_events($link,$type)
       echo '<br><b>Time:</b> 4pm';
       echo '<br><b>Location:</b> '.$line1.' '.$city.', '.$state.'</td></tr>';
       echo '<tr><td valign="top" width="50%"><table border="1" width="100%"><tr><td colspan="2" align="center"><b>Dishes</b></td></tr>';
-      $sql1 = 'select food,e.event_id,fa.name from food f left join (select * from food_for_event where event_id='.$event_id.' and on_menu=1) as e on f.food_id=e.food_id left join event ev on e.event_id=ev.event_id left join bringing b on b.event_id=ev.event_id left join family fa on fa.family_id=b.family_id order by f.food_id';
+      $sql1 = 'select food,e.event_id,fa.name from food f left join (select * from food_for_event where event_id='.$event_id.' and on_menu=1) as e on f.food_id=e.food_id left join event ev on e.event_id=ev.event_id left join family fa on fa.family_id=e.family_id order by f.food_id';
       logger($link,$sql1);
       $data1 = mysqli_query($link,$sql1);
       while (list($food,$on_menu,$family_name)=mysqli_fetch_row($data1))
@@ -784,6 +830,7 @@ function add_events($link)
          }
       }
    }
+   echo '<h2>Add/Edit Events</h2>';
    echo $error;
    echo '<table border="1"><tr>';
    echo '<td width="175px"><b>Family</b></td>';
