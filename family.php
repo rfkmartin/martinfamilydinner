@@ -609,14 +609,25 @@ function add_attendance($link)
 // print unselected foods for event
 function bringing($link)
 {
+   // add none option
    if (isset($_POST['bringingfood']))
    {
-      $food_id=$_POST['bringing'];
-      $sql = 'update food_for_event set family_id='.$_SESSION['family_id'].' where food_id='.$food_id.' and event_id='.$_SESSION['event'];
+      //clear food if changing pick
+      $sql = 'update food_for_event set family_id=null where event_id='.$_SESSION['event'].' and family_id='.$_SESSION['family_id'];
       logger($link,$sql);
       if (!mysqli_query($link,$sql))
       {
-         logger($link,"Error inserting record: " . mysqli_error($link));
+         logger($link,"Error deleting record: " . mysqli_error($link));
+      }
+      $food_id=$_POST['bringing'];
+      if ($food_id!=-1)
+      {
+         $sql = 'update food_for_event set family_id='.$_SESSION['family_id'].' where food_id='.$food_id.' and event_id='.$_SESSION['event'];
+         logger($link,$sql);
+         if (!mysqli_query($link,$sql))
+         {
+            logger($link,"Error inserting record: " . mysqli_error($link));
+         }
       }
    }
    echo '<h2>Bringing</h2>';
@@ -626,21 +637,29 @@ function bringing($link)
       $sql = 'select sum(coming) from attending a join person p on p.person_id=a.person_id where a.event_id='.$_SESSION['event'].' and p.family_id='.$_SESSION['family_id'];
       $data = mysqli_query($link,$sql);
       logger($link,$sql);
-      if (mysqli_fetch_row($data))
+      list($sum)=mysqli_fetch_row($data);
+      if ($sum>0)
       {
          echo '<form action = "" method = "post"><table border="1">';
          $sql = 'select f.food_id,family_id,food from food_for_event ff join food f on ff.food_id=f.food_id where event_id='.$_SESSION['event'].' and on_menu=1 and (family_id='.$_SESSION['family_id'].' or family_id is null)';
          $data = mysqli_query($link,$sql);
          logger($link,$sql);
+         $was_checked=0;
          while (list($food_id,$family_id,$food)=mysqli_fetch_row($data))
          {
             $checked='';
             if ($family_id==$_SESSION['family_id'])
             {
                $checked=' checked';
+               $was_checked=1;
             }
             echo '<tr><td><input type="radio" name="bringing" value='.$food_id.$checked.'>'.$food.'</td></tr>';
          }
+         if ($was_checked==0)
+         {
+            $checked=' checked';
+         }
+         echo '<tr><td><input type="radio" name="bringing" value=-1'.$checked.'>none</td></tr>';
          echo '<tr><td><input type="submit" name="bringingfood" value="Update"></td></tr></table>';
          echo '</form>';
       }
