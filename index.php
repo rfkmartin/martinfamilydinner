@@ -1,21 +1,11 @@
 <?php
-print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n";
-print "<html><head>\n";
-print "<title>Martin Family Dinner</title>\n";
-print "<link href=\"/martinfamilydinner/style.css\" rel=\"stylesheet\" type=\"text/css\">\n";
-print "</head>\n";
-
+session_start();
+$_SESSION['SID']=session_id();
 require_once("login.php");
+include("utils.php");
 include("month.php");
-date_default_timezone_set("America/Chicago");
-// header
-//login
-//calendar
-
-//header w/ user&logout
-//welcome user
-//links to family editing
-//calendar
+print_header();
+set_timezone();
 print "<body>\n";
 print "<table width=\"1080\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" id=\"main_table\" class=\"main_table\">\n";
 print "  <tr>\n";
@@ -28,7 +18,7 @@ print "        <tr><td valign=\"bottom\" class=\"table_header\"><img src=\"Marti
 print "        <td valign=\"top\">Welcome, <span class=\"person\">Martinopoulos Family</span><br>\n";
 print "        Account<br>\n";
 print "        Logout<br></td></tr>\n";
-print "        <tr><td colspan=\"2\" class=\"menu1\">Home | Families | Events</td></tr>\n";
+print "        <tr><td colspan=\"2\" class=\"menu1\">Home | Farmilies | Events</td></tr>\n";
 print "      </table>\n";
 print "    </td></tr>\n";
 print "    <tr><td width=\"81%\" valign=\"top\" align=\"center\">\n";
