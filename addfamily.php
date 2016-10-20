@@ -1,21 +1,15 @@
 <?php
 session_start();
 $_SESSION['SID']=session_id();
-print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n";
-print "<html><head>\n";
-print "<title>Martin Family Dinner</title>\n";
-print "<link href=\"/martinfamilydinner/style.css\" rel=\"stylesheet\" type=\"text/css\">\n";
-print "<script src=\"js/jquery.js\" type=\"text/javascript\"></script>\n";
-print "<script src=\"js/moment.min.js\" type=\"text/javascript\"></script>\n";
-print "<script src=\"js/combodate.js\" type=\"text/javascript\"></script>\n";
-print "</head>\n";
 
 require_once("login.php");
 include("month.php");
 include("family.php");
 include("logger.php");
+include("utils.php");
+print_header();
+set_timezone();
 $SHOW_MONTHS=24;
-date_default_timezone_set("America/Chicago");
 
 //todo
 // new login if not definer user
