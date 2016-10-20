@@ -79,6 +79,15 @@ form{margin:0;}
 .color-secondary-2-3 { color: #FF9D4C }
 .color-secondary-2-4 { color: #E97E25 }
 
+button {
+     background:none!important;
+     border:none; 
+     padding:0!important;
+     font: inherit;
+     /*border is optional*/
+     border-bottom:1px solid #444; 
+     cursor: pointer;
+}
 
 .footer{color:#123456;font-size:12px;}
 .footer a{text-decoration:none;color:#5f91c4;}

@@ -8,6 +8,16 @@ function print_body($link)
 	print_banner();
  	echo '    </td></tr>';
  	echo '    <tr><td width="81%" valign="top" align="center">';
+ 	if ($_SESSION['page']=="")
+ 	{
+ 		echo '<br>';
+ 	}
+ 	elseif ($_SESSION['page']=="RSVP")
+ 	{
+ 		echo add_attendance($link);
+ 		echo "<br><br>";
+ 		echo bringing($link);
+ 	}
  	//print_main();
  	echo print_events($link,'upcoming');
  	echo '    </td>';
@@ -18,15 +28,17 @@ function print_body($link)
 }
 function print_banner()
 {
-	echo '    <table width="100%" border="5" cellspacing="0" cellpadding="0" id="header">';
+	echo '    <table width="100%" border="0" cellspacing="0" cellpadding="0" id="header">';
 	echo '    <tr>';
 	echo '    <td colspan="2">';
 	echo '      <table width="100%" border="0" cellpadding="0" cellspacing="0">';
 	echo '        <tr><td valign="bottom" class="table_header"><img src="Martin-Irish-Crest.jpg" height="150" alt="Martin Family Crest">Martin Family Dinner</td>';
-	echo '        <td valign="top">Welcome, <span class="person">Martinopoulos Family</span><br>';
-	echo '        Account<br>';
-	echo '        Logout<br></td></tr>';
-	echo '        <tr><td colspan="2" class="menu1">Home | My Family | RSVP | Address Book</td></tr>';
+	echo '        <td valign="top">';
+	print_logon();
+	echo '</td></tr>';
+	echo '        <tr><td colspan="2" class="menu1">';
+	print_sub_menu();
+	echo '</td></tr>';
 	echo '      </table>';
 }
 function print_main()

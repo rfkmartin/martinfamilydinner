@@ -18,4 +18,31 @@ function set_timezone()
 {
 	date_default_timezone_set("America/Chicago");
 }
+function print_sub_menu()
+{
+	echo 'Home | My Family | <button>RSVP</button> | Address Book';
+}
+function print_logon()
+{
+	$_SESSION['user']=1;
+	$_SESSION['family_id']=7;
+	$_SESSION['family_name']="Martinopoulos";
+	$_SESSION['is_admin']=1;
+	$_SESSION['page']="";
+	if (empty($_SESSION['user']))
+	{
+		print_logon_form();
+	}
+	else
+	{
+		echo 'Welcome, <span class="person">'.$_SESSION['family_name'].'</span><br>';
+		echo '        Logout<br>';
+	}
+}
+function print_logon_form()
+{
+	echo 'Welcome, <span class="person">Nobody</span><br>';
+	echo '        Account<br>';
+	echo '        Logout<br>';
+}
 ?>

@@ -742,6 +742,10 @@ function print_events($link,$type)
       }
       echo '</td></tr></table>';
       echo '</td></tr></table><br>';
+      if (empty($_SESSION['user']) && $type=='upcoming')
+      {
+      	break;
+      }
    }
 }
 // print all upcoming events with food and attendance
