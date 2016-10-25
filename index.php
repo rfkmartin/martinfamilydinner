@@ -7,6 +7,7 @@ include("month.php");
 include("logger.php");
 include("family.php");
 include("body.php");
+process_forms();
 print_header();
 set_timezone();
 print_body($link);

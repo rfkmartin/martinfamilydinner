@@ -20,29 +20,47 @@ function set_timezone()
 }
 function print_sub_menu()
 {
-	echo 'Home | My Family | <button>RSVP</button> | Address Book';
+	echo '<form action = "" method = "post"><button name="manage">Manage My Family</button> | <button name="rsvp">RSVP</button></form>';
 }
 function print_logon()
 {
-	$_SESSION['user']=1;
-	$_SESSION['family_id']=7;
-	$_SESSION['family_name']="Martinopoulos";
-	$_SESSION['is_admin']=1;
-	$_SESSION['page']="";
 	if (empty($_SESSION['user']))
 	{
 		print_logon_form();
 	}
 	else
 	{
+		print_r($_POST);
 		echo 'Welcome, <span class="person">'.$_SESSION['family_name'].'</span><br>';
-		echo '        Logout<br>';
+		echo '<form action = "" method = "post"><button name="logout">Logout<button><form>';
 	}
 }
 function print_logon_form()
 {
-	echo 'Welcome, <span class="person">Nobody</span><br>';
-	echo '        Account<br>';
-	echo '        Logout<br>';
+	echo '<form action = "" method = "post">';
+	echo 'UserName  :<input type = "text" name = "username"><br>';
+    echo 'Password  :<input type = "password" name = "password"><br>';
+	//echo 'Welcome, <span class="person">Nobody</span><br>';
+	echo '<input type="submit" name="login" value="Log In"><form>';
+}
+function process_forms()
+{
+	if (isset($_POST['logout']))
+	{
+		session_destroy();
+		unset($_SESSION['user']);
+		unset($_SESSION['family_id']);
+		unset($_SESSION['family_name']);
+		unset($_SESSION['is_admin']);
+		unset($_SESSION['page']);
+	}
+	if (isset($_POST['login']))
+	{
+		$_SESSION['user']=1;
+		$_SESSION['family_id']=7;
+		$_SESSION['family_name']="Martinopoulos";
+		$_SESSION['is_admin']=1;
+		$_SESSION['page']="";
+	}
 }
 ?>
