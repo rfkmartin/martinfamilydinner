@@ -38,12 +38,12 @@ function print_logon()
 function print_logon_form()
 {
 	echo '<form action = "" method = "post">';
-	echo 'UserName  :<input type = "text" name = "username"><br>';
-    echo 'Password  :<input type = "password" name = "password"><br>';
+	echo '<table><tr><td align="left">Username:</td><td><input type = "text" name = "username"></td></tr>';
+    echo '<tr><td align="left">Password:</td><td><input type = "password" name = "password"></td></tr></table>';
 	//echo 'Welcome, <span class="person">Nobody</span><br>';
 	echo '<input type="submit" name="login" value="Log In"><form>';
 }
-function process_forms()
+function process_forms($link)
 {
 	if (isset($_POST['logout']))
 	{
@@ -56,11 +56,29 @@ function process_forms()
 	}
 	if (isset($_POST['login']))
 	{
-		$_SESSION['user']=1;
-		$_SESSION['family_id']=7;
-		$_SESSION['family_name']="Martinopoulos";
-		$_SESSION['is_admin']=1;
-		$_SESSION['page']="";
+		$myusername = mysqli_real_escape_string($link,$_POST['username']);
+		$mypassword = mysqli_real_escape_string($link,$_POST['password']);
+		$sql = "select user_id,u.family_id,name,is_admin,passcode from user u join family f on u.family_id=f.family_id where username='".$myusername."'";
+		$result = mysqli_query($link,$sql);
+		list($user,$family_id,$family_name,$is_admin,$hashed) = mysqli_fetch_row($result);
+
+		if(password_verify($mypassword,$hashed)) {
+			$_SESSION['user']=$user;
+			$_SESSION['family_id']=$family_id;
+			$_SESSION['family_name']=$family_name;
+			$_SESSION['is_admin']=$is_admin;
+			$_SESSION['page']="";
+		}else {
+			$error = "Your Login Name or Password is invalid";
+		}
+	}
+	if (isset($_POST['rsvp']))
+	{
+		$sql = "select e.event_id from event e join date d on d.date_id=e.date_id where day!=-1 order by year,month limit 1";
+		$result = mysqli_query($link,$sql);
+		list($event_id) = mysqli_fetch_row($result);
+		$_SESSION['event_id']=$event_id;
+		$_SESSION['page']='RSVP';
 	}
 }
 ?>

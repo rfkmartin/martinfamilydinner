@@ -396,19 +396,19 @@ function add_food_to_event($link)
    {
       $_SESSION['foods']=9;
       $_SESSION['events']=3;
-      $_SESSION['event']=-1;
+      $_SESSION['event_id']=-1;
    }
    $error="";
    if (isset($_POST['changeevent']))
    {
       if ($_POST['event']==-1)
       {
-         $_SESSION['event']=-1;
+         $_SESSION['event_id']=-1;
          $error='<br><font color="red">You must select an event.</font>';
       }
       else
       {
-         $_SESSION['event']=$_POST['event'];
+         $_SESSION['event_id']=$_POST['event'];
       }
    }
    if (isset($_POST['addfoodtoevent']))
@@ -458,14 +458,14 @@ function add_food_to_event($link)
    while (list($fam_name,$event_id,$month,$year,$date)=mysqli_fetch_row($data))
    {
       echo '<option value="'.$event_id.'"';
-      if ($event_id==$_SESSION['event'])
+      if ($event_id==$_SESSION['event_id'])
       {
          echo ' selected';
       }
       echo '>'.date("M",strtotime($date)).' '.date("Y",strtotime($date)).'--'.$fam_name.'</option>'."\n";
    }
    echo '</select><input type="submit" name="changeevent" value="Change Event"></td><td><table border="1">';
-   $sql = "select f.food_id,food,on_menu from food f left join (select * from food_for_event where event_id=".$_SESSION['event'].") as e on f.food_id=e.food_id order by f.food_id";
+   $sql = "select f.food_id,food,on_menu from food f left join (select * from food_for_event where event_id=".$_SESSION['event_id'].") as e on f.food_id=e.food_id order by f.food_id";
    $data = mysqli_query($link,$sql);
    logger($link,$sql);
    $i=0;
@@ -558,7 +558,11 @@ function add_attendance($link)
 {
    if (isset($_POST['addpersonevent']))
    {
-      $personArray = $_POST['persons'];
+      $personArray = [];
+      if (isset($_POST['persons']))
+      {
+         $personArray = $_POST['persons'];
+      }
       $j=0;
       $sql = 'select person_id from person p join family f on p.family_id=f.family_id where f.family_id='.$_SESSION['family_id'];
       logger($link,$sql);
@@ -567,7 +571,7 @@ function add_attendance($link)
       {
          if ($j<count($personArray)&&$personArray[$j]==$person_id)
          {
-            $sql = "update attending set coming=1 where event_id=".$_SESSION['event']." and person_id=".$person_id;
+            $sql = "update attending set coming=1 where event_id=".$_SESSION['event_id']." and person_id=".$person_id;
             logger($link,$sql);
             if (!mysqli_query($link,$sql))
             {
@@ -577,7 +581,7 @@ function add_attendance($link)
          }
          else
          {
-            $sql = "update attending set coming=0 where event_id=".$_SESSION['event']." and person_id=".$person_id;
+            $sql = "update attending set coming=0 where event_id=".$_SESSION['event_id']." and person_id=".$person_id;
             logger($link,$sql);
             if (!mysqli_query($link,$sql))
             {
@@ -587,10 +591,10 @@ function add_attendance($link)
       }
    }
    echo '<h2>Attending</h2>';
-   if (!empty($_SESSION['family_id'])&&!empty($_SESSION['event']))
+   if (!empty($_SESSION['family_id'])&&!empty($_SESSION['event_id']))
    {
       echo '<form action = "" method = "post"><table border="1">';
-      $sql = "select p.person_id,first_name,coming from person p join family f on p.family_id=f.family_id join attending a on p.person_id=a.person_id where f.family_id=".$_SESSION['family_id'].' and a.event_id='.$_SESSION['event'];
+      $sql = "select p.person_id,first_name,coming from person p join family f on p.family_id=f.family_id join attending a on p.person_id=a.person_id where f.family_id=".$_SESSION['family_id'].' and a.event_id='.$_SESSION['event_id'];
       $data = mysqli_query($link,$sql);
       logger($link,$sql);
       while (list($person_id,$firstname,$coming)=mysqli_fetch_row($data))
@@ -605,6 +609,10 @@ function add_attendance($link)
       echo '<tr><td><input type="submit" name="addpersonevent" value="Update"></td></tr></table>';
       echo '</form>';
    }
+   else
+   {
+      echo 'No currently scheduled events';
+   }
 }
 // print unselected foods for event
 function bringing($link)
@@ -613,7 +621,7 @@ function bringing($link)
    if (isset($_POST['bringingfood']))
    {
       //clear food if changing pick
-      $sql = 'update food_for_event set family_id=null where event_id='.$_SESSION['event'].' and family_id='.$_SESSION['family_id'];
+      $sql = 'update food_for_event set family_id=null where event_id='.$_SESSION['event_id'].' and family_id='.$_SESSION['family_id'];
       logger($link,$sql);
       if (!mysqli_query($link,$sql))
       {
@@ -622,7 +630,7 @@ function bringing($link)
       $food_id=$_POST['bringing'];
       if ($food_id!=-1)
       {
-         $sql = 'update food_for_event set family_id='.$_SESSION['family_id'].' where food_id='.$food_id.' and event_id='.$_SESSION['event'];
+         $sql = 'update food_for_event set family_id='.$_SESSION['family_id'].' where food_id='.$food_id.' and event_id='.$_SESSION['event_id'];
          logger($link,$sql);
          if (!mysqli_query($link,$sql))
          {
@@ -631,17 +639,17 @@ function bringing($link)
       }
    }
    echo '<h2>Bringing</h2>';
-   if (!empty($_SESSION['family_id'])&&!empty($_SESSION['event']))
+   if (!empty($_SESSION['family_id'])&&!empty($_SESSION['event_id']))
    {
       // check to make sure at least one family member is attending
-      $sql = 'select sum(coming) from attending a join person p on p.person_id=a.person_id where a.event_id='.$_SESSION['event'].' and p.family_id='.$_SESSION['family_id'];
+      $sql = 'select sum(coming) from attending a join person p on p.person_id=a.person_id where a.event_id='.$_SESSION['event_id'].' and p.family_id='.$_SESSION['family_id'];
       $data = mysqli_query($link,$sql);
       logger($link,$sql);
       list($sum)=mysqli_fetch_row($data);
       if ($sum>0)
       {
          echo '<form action = "" method = "post"><table border="1">';
-         $sql = 'select f.food_id,family_id,food from food_for_event ff join food f on ff.food_id=f.food_id where event_id='.$_SESSION['event'].' and on_menu=1 and (family_id='.$_SESSION['family_id'].' or family_id is null)';
+         $sql = 'select f.food_id,family_id,food from food_for_event ff join food f on ff.food_id=f.food_id where event_id='.$_SESSION['event_id'].' and on_menu=1 and (family_id='.$_SESSION['family_id'].' or family_id is null)';
          $data = mysqli_query($link,$sql);
          logger($link,$sql);
          $was_checked=0;
