@@ -231,6 +231,7 @@ function family_addnew($link)
 
    if (!empty($_SESSION['family_id']))
    {
+      echo '<h2>Edit Family Info</h2>';
       $sql = "select family_id,name,line1,line2,city,state,zip,phone,day,month,year from family join address on family.address_id=address.address_id left join date on family.anniversary_id=date.date_id where family_id=".$_SESSION['family_id'];
       $data = mysqli_query($link,$sql);
       list($family_id,$name,$line1,$line2,$city,$state,$zip,$phone,$day,$month,$year) = mysqli_fetch_row($data);
@@ -336,6 +337,7 @@ function member_addnew($link)
    $i=1;
    if (!empty($_SESSION['family_id']))
    {
+      echo '<center><h2>Add a Family Member</h2></center>';
       $sql = "select person_id,first_name,last_name,email,show_age,day,month,year,birthday_id from person left join date on person.birthday_id=date.date_id where family_id=".$_SESSION['family_id'];
       $data = mysqli_query($link,$sql);
       echo '<table border="1"><tr><td width="150px">First Name</td><td width="150px">Last Name</td><td width="150px">Email</td><td width="100px">Show Age?</td><td width="175px">Birthdate</td><td width="75px"></td></tr></table>';

@@ -7,7 +7,7 @@ function print_header()
 	echo '<link href="/martinfamilydinner/style.css" rel="stylesheet" type="text/css">';
 	echo '<script src="js/jquery.js" type="text/javascript"></script>';
 	echo '<script src="js/moment.min.js" type="text/javascript"></script>';
-	echo '<script src="js/combodate.js" type="text/javascript"></script>';	
+	echo '<script src="js/combodate.js" type="text/javascript"></script>';
 	echo '</head>';
 }
 function print_footer()
@@ -20,7 +20,7 @@ function set_timezone()
 }
 function print_sub_menu()
 {
-	echo '<form action = "" method = "post"><button name="manage">Manage My Family</button> | <button name="rsvp">RSVP</button></form>';
+	echo '<form action = "" method = "post"><button name="manage">Manage My Family</button> | <button name="rsvp">RSVP</button> | <button name="upcoming">Upcoming Events</button></form>';
 }
 function print_logon()
 {
@@ -79,6 +79,14 @@ function process_forms($link)
 		list($event_id) = mysqli_fetch_row($result);
 		$_SESSION['event_id']=$event_id;
 		$_SESSION['page']='RSVP';
+	}
+	if (isset($_POST['manage']))
+	{
+		$_SESSION['page']='manage';
+	}
+	if (isset($_POST['upcoming']))
+	{
+		$_SESSION['page']='upcoming';
 	}
 }
 ?>

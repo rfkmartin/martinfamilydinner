@@ -12,16 +12,29 @@ function print_body($link)
  	echo '    <tr><td width="81%" valign="top" align="center">';
  	if (empty($_SESSION['page'])||$_SESSION['page']=="")
  	{
+      echo print_events($link,'upcoming');
  		echo '<br>';
  	}
  	elseif ($_SESSION['page']=="RSVP")
  	{
+      echo '<table><tr align="center"><td valign="top">';
  		echo add_attendance($link);
- 		echo "<br><br>";
+ 		echo '</td><td width="30%"></td><td valign="top">';
  		echo bringing($link);
+      echo '</td></tr></table>';
  	}
- 	//print_main();
- 	echo print_events($link,'upcoming');
+ 	elseif ($_SESSION['page']=="manage")
+ 	{
+      echo '<table><tr align="center"><td>';
+      echo family_addnew($link);
+ 		echo '</td></tr><tr><td>';
+      echo member_addnew($link);
+      echo '</td></tr></table>';
+ 	}
+ 	elseif ($_SESSION['page']=="upcoming")
+ 	{
+      echo print_events($link,'upcoming');
+ 	}
  	echo '    </td>';
  	echo '    <td>';
  	echo draw_calendar($link,date('n'),date('Y'),$SHOW_MONTHS);
@@ -42,30 +55,5 @@ function print_banner()
 	print_sub_menu();
 	echo '</td></tr>';
 	echo '      </table>';
-}
-function print_main()
-{
-	print '    <table border="1"><tr><td colspan="2">';
-	print '    <b>May 2016</b><br><b>Host:</b> Martinopoulos(<a href="https://goo.gl/maps/1vDoRby74AB2">map</a>)<br><b>Date:</b> Sun, May 29<br><b>Time:</b> 4pm</td></tr> ';
-	print '    <tr><td valign="top" width="50%"><table border="1"><tr><td colspan="2"><b>Dishes</b></td></tr>';
-	print '    <tr><td valign="top"><b>Martinopoulos</b></td><td>main course</td></tr>';
-	print '    <tr><td valign="top"><b>Jefferson Martin Family</b></td><td>pasta salad</td></tr>';
-	print '    <tr><td valign="top"><b>Bill Martin Family</b></td><td>white wine</td></tr>';
-	print '    <tr><td valign="top"><b>Eide Family</b></td><td>veggie tray</td></tr>';
-	print '    </table></td><td valign="top">';
-	print '    <table border="1"><tr><td colspan="2"><b>Attending</b></td></tr>';
-	print '    <tr><td valign="top"><b>Martinopoulos</b></td><td>Rob<br>Steph<br>Stevie<br>Bobby<br>Teddy<br></td></tr>';
-	print '    <tr><td valign="top"><b>Jefferson Martin Family</b></td><td>Patrick<br><Rebecca<br><Finn<br>Brigit</td></tr>';
-	print '    <tr><td valign="top"><b>Bill Martin Family</b></td><td>Bill<br>Maripat</td></tr>';
-	print '    <tr><td valign="top"><b>Eide Family</b></td><td>Mike<br>Jordan</td></tr>';
-	print '    </table></td></tr></table>';
-	print '    <table border="1"><tr><td colspan="2">';
-	print '    <b>June 2016</b><br><b>Host:</b> Jefferson Martin(<a href="https://goo.gl/maps/1vDoRby74AB2">map</a>)<br><b>Date:</b> Sun, May 29<br><b>Time:</b> 4pm</td></tr> ';
-	print '    <tr><td valign="top" width="50%"><table border="1"><tr><td colspan="2"><b>Dishes</b></td></tr>';
-	print '    <tr><td valign="top"><b>Jefferson Martin</b></td><td>main course</td></tr>';
-	print '    </table></td><td valign="top">';
-	print '    <table border="1"><tr><td colspan="2"><b>Attending</b></td></tr>';
-	print '    <tr><td valign="top"><b>Jefferson Martin</b></td><td>Patrick<br>Rebecca<br>Finn<br>Brigit<br></td></tr>';
-	print '    </table></td></tr></table>';
 }
 ?>
