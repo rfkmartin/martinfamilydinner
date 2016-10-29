@@ -12,7 +12,17 @@ function print_body($link)
  	echo '    <tr><td width="81%" valign="top" align="center">';
  	if (empty($_SESSION['page'])||$_SESSION['page']=="")
  	{
-      echo print_events($link,'upcoming');
+      echo print_events($link,'next');
+ 		echo '<br>';
+ 	}
+ 	elseif ($_SESSION['page']=="families")
+ 	{
+      echo family_table($link);
+ 		echo '<br>';
+ 	}
+ 	elseif ($_SESSION['page']=="next")
+ 	{
+      echo print_events($link,'next');
  		echo '<br>';
  	}
  	elseif ($_SESSION['page']=="RSVP")
@@ -26,9 +36,9 @@ function print_body($link)
  	elseif ($_SESSION['page']=="manage")
  	{
       echo '<table><tr align="center"><td>';
-      echo family_addnew($link);
+      echo add_food_to_event($link);
  		echo '</td></tr><tr><td>';
-      echo member_addnew($link);
+      echo add_events($link);
       echo '</td></tr></table>';
  	}
  	elseif ($_SESSION['page']=="upcoming")

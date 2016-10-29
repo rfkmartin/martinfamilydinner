@@ -4,7 +4,14 @@ $OUTFILE="mfd.log";
 
 function logger($link,$message)
 {
-   $user=$_SESSION['user'];
+   if (empty($_SESSION['user']))
+   {
+      $user=-1;
+   }
+   else
+   {
+      $user=$_SESSION['user'];
+   }
    $sql = "insert into logger (msg_dt,session_id,user_id,message) values (now(),\"".$_SESSION['SID']."\",".$user.",\"".mysqli_real_escape_string($link,$message)."\")";
    if (mysqli_query($link,$sql))
    {

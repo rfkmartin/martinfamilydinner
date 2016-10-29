@@ -2,7 +2,7 @@
 // print table of familes
 function family_table($link)
 {
-
+   echo '<h2>Families</h2>';
    $i=0;
    $sql = "select family_id,name,phone,day,month,year,line1,line2,city,state,zip from family left join date on anniversary_id=date_id left join address on family.address_id=address.address_id order by name";
    $data = mysqli_query($link,$sql);
@@ -12,7 +12,7 @@ function family_table($link)
 
 	$calendar = '<table border="1" cellpadding="1" cellspacing="1" class="family_table">';
 
-   $calendar.= '<tr><td>Name</td><td>Address</td><td>Phone</td><td>Anniversary</td><td></td></tr>';
+   $calendar.= '<tr><td>Name</td><td>Address</td><td>Phone</td><td>Anniversary</td></tr>';
 
    for($x=0;$x<$i;$x++)
    {
@@ -39,7 +39,7 @@ function family_table($link)
       {
          $calendar.='<td>'.$month[$x].'/'.$day[$x].'/'.$year[$x].'</td>';
       }
-      $calendar.='<td><form action = "" method = "post"><input type="hidden" name="family_id" value="'.$id[$x].'"><input type="submit" name="delete" value="Delete"></form></td></tr>';
+      $calendar.='</tr>';
    }
    $calendar.='</table>';
 
@@ -665,6 +665,7 @@ function bringing($link)
             }
             echo '<tr><td><input type="radio" name="bringing" value='.$food_id.$checked.'>'.$food.'</td></tr>';
          }
+         $checked='';
          if ($was_checked==0)
          {
             $checked=' checked';
@@ -678,26 +679,40 @@ function bringing($link)
 // print all upcoming events with food and attendance
 function print_events($link,$type)
 {
+   if ($type=='next')
+   {
+      $title='Next Event';
+      $timearrow='>=';
+      $cancelled=' where e.cancel=0';
+      $limit = ' limit 1';
+   }
    if ($type=='upcoming')
    {
       $title='Upcoming Events';
-      $timearrow='>';
+      $timearrow='>=';
       $cancelled=' where e.cancel=0';
+      $limit = '';
    }
    elseif ($type=='cancelled')
    {
       $title='Cancelled Events';
       $timearrow='>';
       $cancelled=' where e.cancel=1';
+      $limit = '';
    }
    elseif ($type=='past')
    {
       $title='Past Events';
       $timearrow='<';
       $cancelled='';
+      $limit = '';
+   }
+   if (empty($_SESSION['user']))
+   {
+      $limit = ' limit 1';
    }
    echo '<h2>'.$title.'</h2>';
-   $sql = "select * from (select e.event_id,f.name,e.family_id,ad.line1,ad.city,ad.state,d.month,d.day,d.year,str_to_date(concat(concat(month,'/',greatest(day,1)),'/',year),'%m/%d/%Y') dt from date d join event e on d.date_id=e.date_id join family f on f.family_id=e.family_id join address ad on ad.address_id=f.address_id".$cancelled.") as a where a.dt".$timearrow."curdate()";
+   $sql = "select * from (select e.event_id,f.name,e.family_id,ad.line1,ad.city,ad.state,d.month,d.day,d.year,str_to_date(concat(concat(month,'/',greatest(day,1)),'/',year),'%m/%d/%Y') dt from date d join event e on d.date_id=e.date_id join family f on f.family_id=e.family_id join address ad on ad.address_id=f.address_id".$cancelled.") as a where a.dt".$timearrow."curdate()".$limit;
    logger($link,$sql);
    $data = mysqli_query($link,$sql);
    while (list($event_id,$fam_name,$fam_id,$line1,$city,$state,$month,$day,$year,$date)=mysqli_fetch_row($data))
@@ -714,45 +729,49 @@ function print_events($link,$type)
       }
       echo '<br><b>Time:</b> 4pm';
       echo '<br><b>Location:</b> '.$line1.' '.$city.', '.$state.'</td></tr>';
-      echo '<tr><td valign="top" width="50%"><table border="1" width="100%"><tr><td colspan="2" align="center"><b>Dishes</b></td></tr>';
-      $sql1 = 'select food,e.event_id,fa.name from food f left join (select * from food_for_event where event_id='.$event_id.' and on_menu=1) as e on f.food_id=e.food_id left join event ev on e.event_id=ev.event_id left join family fa on fa.family_id=e.family_id order by f.food_id';
-      logger($link,$sql1);
-      $data1 = mysqli_query($link,$sql1);
-      while (list($food,$on_menu,$family_name)=mysqli_fetch_row($data1))
+      if ($type!='upcoming')
       {
-         if ($on_menu!="")
+         echo '<tr><td valign="top" width="50%"><table border="1" width="100%"><tr><td colspan="2" align="center"><b>Dishes</b></td></tr>';
+         $sql1 = 'select food,e.event_id,fa.name from food f left join (select * from food_for_event where event_id='.$event_id.' and on_menu=1) as e on f.food_id=e.food_id left join event ev on e.event_id=ev.event_id left join family fa on fa.family_id=e.family_id order by f.food_id';
+         logger($link,$sql1);
+         $data1 = mysqli_query($link,$sql1);
+         while (list($food,$on_menu,$family_name)=mysqli_fetch_row($data1))
          {
-            echo '<tr><td width="67%">';
-            if ($family_name!="")
+            if ($on_menu!="")
             {
-               echo '<b>'.$family_name.'</b>';
+               echo '<tr><td width="67%">';
+               if ($family_name!="")
+               {
+                  echo '<b>'.$family_name.'</b>';
+               }
+               echo '</td><td>'.$food.'</td></tr>';
             }
-            echo '</td><td>'.$food.'</td></tr>';
          }
-      }
-      echo '</table></td><td valign="top">';
-      echo '<table border="1" width="100%"><tr><td colspan="2" align="center"><b>Attending</b>';
-      $sql1 = 'select name,first_name from person p join family f on p.family_id=f.family_id join attending a on p.person_id=a.person_id where a.event_id='.$event_id.' and coming=1';
-      logger($link,$sql1);
-      $data1 = mysqli_query($link,$sql1);
-      $prev_name="";
-      while (list($family_name,$first)=mysqli_fetch_row($data1))
-      {
-         if ($prev_name!=$family_name)
+         echo '</table></td><td valign="top">';
+         echo '<table border="1" width="100%"><tr><td colspan="2" align="center"><b>Attending</b>';
+         $sql1 = 'select name,first_name from person p join family f on p.family_id=f.family_id join attending a on p.person_id=a.person_id where a.event_id='.$event_id.' and coming=1';
+         logger($link,$sql1);
+         $data1 = mysqli_query($link,$sql1);
+         $prev_name="";
+         while (list($family_name,$first)=mysqli_fetch_row($data1))
          {
-            $prev_name=$family_name;
-            echo '</td></tr><tr><td width="75%">';
-            echo '<b>'.$family_name.'</b>';
-            echo '</td><td>'.$first;
+            if ($prev_name!=$family_name)
+            {
+               $prev_name=$family_name;
+               echo '</td></tr><tr><td width="75%">';
+               echo '<b>'.$family_name.'</b>';
+               echo '</td><td>'.$first;
+            }
+            else
+            {
+               echo '<br>'.$first;
+            }
          }
-         else
-         {
-            echo '<br>'.$first;
-         }
+         echo '</td></tr></table>';
+         echo '</td></tr>';
       }
-      echo '</td></tr></table>';
-      echo '</td></tr></table><br>';
-      if (empty($_SESSION['user']) && $type=='upcoming')
+      echo '</table><br>';
+      if ((empty($_SESSION['user']) && $type=='upcoming'))
       {
       	break;
       }

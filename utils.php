@@ -20,7 +20,23 @@ function set_timezone()
 }
 function print_sub_menu()
 {
-	echo '<form action = "" method = "post"><button name="manage">Manage My Family</button> | <button name="rsvp">RSVP</button> | <button name="upcoming">Upcoming Events</button></form>';
+   echo '<form action = "" method = "post">';
+   if (!empty($_SESSION['user']))
+   {
+      echo '<button name="manage">Manage My Family</button>';
+      echo ' | <button name="families">Family Roster</button>';
+      echo ' | <button name="rsvp">RSVP</button>';
+      echo ' | <button name="next">Next Event</button>';
+      echo ' | <button name="upcoming">Upcoming Events</button>';
+      echo ' | <button name="manage">Manage Your Event</button>';
+      if ($_SESSION['is_admin']==1)
+      {
+         echo '<br>';
+         echo '<button name="admin">Admin menu 1</button>';
+         echo ' | <button name="admin">Admin menu 2</button>';
+      }
+   }
+   echo '</form>&nbsp;';
 }
 function print_logon()
 {
@@ -87,6 +103,18 @@ function process_forms($link)
 	if (isset($_POST['upcoming']))
 	{
 		$_SESSION['page']='upcoming';
+	}
+	if (isset($_POST['next']))
+	{
+		$_SESSION['page']='next';
+	}
+	if (isset($_POST['families']))
+	{
+		$_SESSION['page']='families';
+	}
+	if (isset($_POST['manage']))
+	{
+		$_SESSION['page']='manage';
 	}
 }
 ?>
