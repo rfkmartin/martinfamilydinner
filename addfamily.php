@@ -55,7 +55,7 @@ echo member_addnew($link);
 echo "<br><br>";
 echo add_food($link);
 echo "<br><br>";
-echo add_food_to_event($link);
+echo add_food_to_event_admin($link);
 echo "<br><br>";
 echo add_attendance($link);
 echo "<br><br>";

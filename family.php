@@ -392,7 +392,7 @@ function format_phone($phone)
    }
 }
 // print ddl of upcoming events and checkboxes of possible foods
-function add_food_to_event($link)
+function add_food_to_event_admin($link)
 {
    if (empty($_SESSION['foods']))
    {
@@ -834,7 +834,7 @@ function add_events($link)
       $data = mysqli_query($link,$sql);
       while (list($person_id)=mysqli_fetch_row($data))
       {
-         $sql1 = 'insert into attending (event_id,person_id) values ('.event_id.','.person_id.')';
+         $sql1 = 'insert into attending (event_id,person_id) values ('.$event_id.','.$person_id.')';
          logger($link,$sql);
          if (!mysqli_query($link,$sql))
          {

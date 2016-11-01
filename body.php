@@ -33,12 +33,20 @@ function print_body($link)
  		echo bringing($link);
       echo '</td></tr></table>';
  	}
- 	elseif ($_SESSION['page']=="manage")
+ 	elseif ($_SESSION['page']=="managefam")
+ 	{
+ 		echo '<table><tr align="center"><td>';
+ 		echo family_addnew($link);
+ 		echo '</td></tr><tr><td>';
+ 		echo member_addnew($link);
+ 		echo '</td></tr></table>';
+ 	}
+ 	elseif ($_SESSION['page']=="manageev")
  	{
       echo '<table><tr align="center"><td>';
       echo add_food_to_event($link);
- 		echo '</td></tr><tr><td>';
-      echo add_events($link);
+ 		echo '</td></tr><tr><td align="center">';
+      echo set_event($link);
       echo '</td></tr></table>';
  	}
  	elseif ($_SESSION['page']=="upcoming")

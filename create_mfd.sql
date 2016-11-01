@@ -163,8 +163,8 @@ insert into date(date_id,day,month,year) values (22,15,7,2010); -- Stevie
 insert into date(date_id,day,month,year) values (23,18,7,2013); -- Bobby
 insert into date(date_id,day,month,year) values (24,18,7,2013); -- Teddy
 insert into date(date_id,day,month,year) values (25,19,5,2007); -- Martinopoulos
-insert into date(date_id,day,month,year) values (26,29,10,2016); -- Martinopoulos 5/16 dinner
-insert into date(date_id,day,month,year) values (27,14,11,2016); -- Martin hypthetical dinner
+insert into date(date_id,day,month,year) values (26,29,11,2016); -- Martinopoulos 5/16 dinner
+insert into date(date_id,day,month,year) values (27,14,12,2016); -- Martin hypthetical dinner
 insert into date(date_id,day,month,year) values (28,-1,1,2017); -- Martin hypthetical dinner
 
 -- Sarah
@@ -221,6 +221,17 @@ insert into person(person_id,first_name,last_name,family_id,birthday_id,show_age
 insert into user(user_id,username,passcode,is_admin,family_id) values (1,'rfkmartin@gmail.com','$2y$10$Wq/fWFdJRfbV1u8O1Hh/UO2R2kWht3XNowsCVbE5DV3V9zvMkFrIW',1,7);
 -- abc123/
 insert into user(user_id,username,passcode,is_admin,family_id) values (2,'mart0124@umn.edu','$2y$10$Wq/fWFdJRfbV1u8O1Hh/UO2R2kWht3XNowsCVbE5DV3V9zvMkFrIW',0,7);
+insert into user(user_id,username,passcode,is_admin,family_id) values (3,'sarah@arendt.com','$2y$10$Wq/fWFdJRfbV1u8O1Hh/UO2R2kWht3XNowsCVbE5DV3V9zvMkFrIW',0,1);
+insert into user(user_id,username,passcode,is_admin,family_id) values (4,'kevin@arendt.com','$2y$10$Wq/fWFdJRfbV1u8O1Hh/UO2R2kWht3XNowsCVbE5DV3V9zvMkFrIW',0,2);
+insert into user(user_id,username,passcode,is_admin,family_id) values (5,'robin@corry.com','$2y$10$Wq/fWFdJRfbV1u8O1Hh/UO2R2kWht3XNowsCVbE5DV3V9zvMkFrIW',0,3);
+insert into user(user_id,username,passcode,is_admin,family_id) values (6,'kate@eide.com','$2y$10$Wq/fWFdJRfbV1u8O1Hh/UO2R2kWht3XNowsCVbE5DV3V9zvMkFrIW',0,4);
+insert into user(user_id,username,passcode,is_admin,family_id) values (7,'meagan@galbari.com','$2y$10$Wq/fWFdJRfbV1u8O1Hh/UO2R2kWht3XNowsCVbE5DV3V9zvMkFrIW',0,5);
+insert into user(user_id,username,passcode,is_admin,family_id) values (8,'maripat@martin.com','$2y$10$Wq/fWFdJRfbV1u8O1Hh/UO2R2kWht3XNowsCVbE5DV3V9zvMkFrIW',0,6);
+insert into user(user_id,username,passcode,is_admin,family_id) values (9,'becky@martin.com','$2y$10$Wq/fWFdJRfbV1u8O1Hh/UO2R2kWht3XNowsCVbE5DV3V9zvMkFrIW',0,8);
+insert into user(user_id,username,passcode,is_admin,family_id) values (10,'michelle@martin.com','$2y$10$Wq/fWFdJRfbV1u8O1Hh/UO2R2kWht3XNowsCVbE5DV3V9zvMkFrIW',0,9);
+insert into user(user_id,username,passcode,is_admin,family_id) values (11,'sharon@sheppard','$2y$10$Wq/fWFdJRfbV1u8O1Hh/UO2R2kWht3XNowsCVbE5DV3V9zvMkFrIW',0,10);
+insert into user(user_id,username,passcode,is_admin,family_id) values (12,'mo@martin.com','$2y$10$Wq/fWFdJRfbV1u8O1Hh/UO2R2kWht3XNowsCVbE5DV3V9zvMkFrIW',0,11);
+insert into user(user_id,username,passcode,is_admin,family_id) values (13,'adie@martin.com','$2y$10$Wq/fWFdJRfbV1u8O1Hh/UO2R2kWht3XNowsCVbE5DV3V9zvMkFrIW',0,12);
 
 insert into event(event_id,date_id,family_id) values (1,26,7);
 insert into event(event_id,date_id,family_id) values (2,27,9);

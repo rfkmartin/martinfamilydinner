@@ -23,12 +23,12 @@ function print_sub_menu()
    echo '<form action = "" method = "post">';
    if (!empty($_SESSION['user']))
    {
-      echo '<button name="manage">Manage My Family</button>';
+      echo '<button name="myfamily">Manage My Family</button>';
       echo ' | <button name="families">Family Roster</button>';
       echo ' | <button name="rsvp">RSVP</button>';
       echo ' | <button name="next">Next Event</button>';
       echo ' | <button name="upcoming">Upcoming Events</button>';
-      echo ' | <button name="manage">Manage Your Event</button>';
+      echo ' | <button name="myevent">Manage Your Event</button>';
       if ($_SESSION['is_admin']==1)
       {
          echo '<br>';
@@ -90,15 +90,16 @@ function process_forms($link)
 	}
 	if (isset($_POST['rsvp']))
 	{
-		$sql = "select e.event_id from event e join date d on d.date_id=e.date_id where day!=-1 order by year,month limit 1";
+		$sql = "select e.event_id from event e join date d on d.date_id=e.date_id where day!=-1 and str_to_date(concat(concat(month,'/',day),'/',year),'%m/%d/%Y')>curdate() order by year, month limit 1";
+		//$sql = "select e.event_id from event e join date d on d.date_id=e.date_id where day!=-1 order by year,month limit 1";
 		$result = mysqli_query($link,$sql);
 		list($event_id) = mysqli_fetch_row($result);
 		$_SESSION['event_id']=$event_id;
 		$_SESSION['page']='RSVP';
 	}
-	if (isset($_POST['manage']))
+	if (isset($_POST['myfamily']))
 	{
-		$_SESSION['page']='manage';
+		$_SESSION['page']='managefam';
 	}
 	if (isset($_POST['upcoming']))
 	{
@@ -112,9 +113,9 @@ function process_forms($link)
 	{
 		$_SESSION['page']='families';
 	}
-	if (isset($_POST['manage']))
+	if (isset($_POST['myevent']))
 	{
-		$_SESSION['page']='manage';
+		$_SESSION['page']='manageev';
 	}
 }
 ?>

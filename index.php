@@ -6,6 +6,7 @@ include("utils.php");
 include("month.php");
 include("logger.php");
 include("family.php");
+include("event.php");
 include("body.php");
 process_forms($link);
 print_header();
