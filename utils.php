@@ -69,6 +69,7 @@ function process_forms($link)
 		unset($_SESSION['family_name']);
 		unset($_SESSION['is_admin']);
 		unset($_SESSION['page']);
+		unset($_SESSION['foods']);
 	}
 	if (isset($_POST['login']))
 	{
@@ -84,17 +85,29 @@ function process_forms($link)
 			$_SESSION['family_name']=$family_name;
 			$_SESSION['is_admin']=$is_admin;
 			$_SESSION['page']="";
-		}else {
+			$sql = "select e.event_id from event e join date d on d.date_id=e.date_id where day!=-1 and str_to_date(concat(concat(month,'/',day),'/',year),'%m/%d/%Y')>curdate() order by year, month limit 1";
+			$result = mysqli_query($link,$sql);
+			if (!empty($result))
+			{
+				list($event_id) = mysqli_fetch_row($result);
+				$_SESSION['event_id']=$event_id;
+			}
+			else
+			{
+				$_SESSION['event_id']=-1;
+			}
+			$sql = "select count(*) from food";
+			$result = mysqli_query($link,$sql);
+         list($foods) = mysqli_fetch_row($result);
+			$_SESSION['foods']=$foods;
+		}
+		else
+		{
 			$error = "Your Login Name or Password is invalid";
 		}
 	}
 	if (isset($_POST['rsvp']))
 	{
-		$sql = "select e.event_id from event e join date d on d.date_id=e.date_id where day!=-1 and str_to_date(concat(concat(month,'/',day),'/',year),'%m/%d/%Y')>curdate() order by year, month limit 1";
-		//$sql = "select e.event_id from event e join date d on d.date_id=e.date_id where day!=-1 order by year,month limit 1";
-		$result = mysqli_query($link,$sql);
-		list($event_id) = mysqli_fetch_row($result);
-		$_SESSION['event_id']=$event_id;
 		$_SESSION['page']='RSVP';
 	}
 	if (isset($_POST['myfamily']))
