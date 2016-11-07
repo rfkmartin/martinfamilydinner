@@ -80,12 +80,6 @@ function set_event($link)
 }
 function add_food_to_event($link)
 {
-// 	if (empty($_SESSION['foods']))
-// 	{
-// 		$_SESSION['foods']=9;
-// 		$_SESSION['events']=3;
-// 		$_SESSION['event_id']=-1;
-// 	}
 	$error="";
 	if (isset($_POST['addfoodtoevent']))
 	{
@@ -160,12 +154,71 @@ function add_food_to_event($link)
 // print all upcoming events with food and attendance
 function select_event($link)
 {
-   echo '<h2>Pick your month to host for 2017</h2>';
-   for ($i=0; $i<12;$i++)
+   $year = date('Y',strtotime("+1 year"));
+   print_r($_POST);
+   if (isset($_POST['eventselected']))
    {
-      echo '<form>';
-      echo '<table border="1"><tr>';
-      echo '<td>Month '.$i.'</td><td>Family drop down</td><td>Select button</td></tr></table></form>';
+      echo $_POST['month'];
+      $sql = "insert into date(day,month,year) values (-1,'".$_POST['month']."','".$year."')";
+      logger($link,$sql);
+      if (mysqli_query($link,$sql))
+      {
+         $date_id = mysqli_insert_id($link);
+      }
+      else
+      {
+         logger($link,"Error inserting record: " . mysqli_error($link));
+      }
+      $sql = "insert into event(family_id,date_id) values (".$_SESSION['family_id'].",".$date_id.")";
+      logger($link,$sql);
+      if (!mysqli_query($link,$sql))
+      {
+         logger($link,"Error inserting record: " . mysqli_error($link));
+      }
+      else
+      {
+         $event_id = mysqli_insert_id($link);
+      }
+      //$_SESSION['events']++;
+   }
+   echo '<h2>Pick your month to host for '.$year.'</h2>';
+   $sql = 'select month from event e join date d on e.date_id=d.date_id where year='.$year.' and family_id='.$_SESSION['family_id'];
+   logger($link,$sql);
+   $data = mysqli_query($link,$sql);
+   $month=-1;
+   if (mysqli_num_rows($data)>=1)
+   {
+      list($month)=mysqli_fetch_row($data);
+   }
+   for ($i=1; $i<=12;$i++)
+   {
+      $sql = 'select name from family f join event e on e.family_id=f.family_id join date d on e.date_id=d.date_id where year='.$year.' and month='.$i;
+      logger($link,$sql);
+      $data = mysqli_query($link,$sql);
+      $name='';
+      if (mysqli_num_rows($data)>=1)
+      {
+         list($name)=mysqli_fetch_row($data);
+      }
+      echo '<form action = "" method = "post">';
+      echo '<table border="1" width="75%"><tr>';
+      echo '<td width="45%">'.date('F', mktime(0, 0, 0, $i, 10)).' '.$year.'</td><td width="45%">'.$name.'</td><td align="center">';
+      if ($month==-1 && $name=='')
+      {
+         echo '<input type="hidden" name="month" value='.$i.'><input type="submit" name="eventselected" value="Select"></td></tr></table></form>';
+      }
+      elseif ($month==-1 && $name!='')
+      {
+         echo '<input type="hidden" name="month" value='.$i.'></td></tr></table></form>';
+      }
+      elseif ($month==$i)
+      {
+         echo '<input type="hidden" name="month" value='.$i.'><input type="submit" name="eventdrop" value="Drop"></td></tr></table></form>';
+      }
+      else
+      {
+         echo '<input type="hidden" name="month" value='.$i.'></td></tr></table></form>';
+      }
    }
 }
 ?>

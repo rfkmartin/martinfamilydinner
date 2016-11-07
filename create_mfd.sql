@@ -12,6 +12,7 @@ create table logger (
    logger_id int not null auto_increment,
    msg_dt datetime not null,
    session_id varchar(32) not null,
+   page varchar(32) not null,
    user_id int not null,
    message varchar(512) not null,
    primary key (logger_id)
@@ -103,16 +104,6 @@ create table attending (
    foreign key (person_id) references person(person_id)
 );
 
-create table bringing (
-   event_id int not null,
-   family_id int not null,
-   food_id int not null,
-   primary key (event_id,family_id),
-   foreign key (event_id) references event(event_id),
-   foreign key (food_id) references food(food_id),
-   foreign key (family_id) references family(family_id)
-);
-
 -- Sarah
 insert into address(address_id,line1,line2,city,state,zip) values (1,'1181 Ivy Hill Drive','','Mendota Heights', 'MN', '55118');
 -- Kevin
@@ -164,8 +155,6 @@ insert into date(date_id,day,month,year) values (23,18,7,2013); -- Bobby
 insert into date(date_id,day,month,year) values (24,18,7,2013); -- Teddy
 insert into date(date_id,day,month,year) values (25,19,5,2007); -- Martinopoulos
 insert into date(date_id,day,month,year) values (26,29,11,2016); -- Martinopoulos 5/16 dinner
-insert into date(date_id,day,month,year) values (27,14,12,2016); -- Martin hypthetical dinner
-insert into date(date_id,day,month,year) values (28,-1,1,2017); -- Martin hypthetical dinner
 
 -- Sarah
 insert into family(family_id,name,address_id,phone,anniversary_id) values (1,'Arendt(Mendota Hts)',1,NULL,NULL);
@@ -234,8 +223,6 @@ insert into user(user_id,username,passcode,is_admin,family_id) values (12,'mo@ma
 insert into user(user_id,username,passcode,is_admin,family_id) values (13,'adie@martin.com','$2y$10$Wq/fWFdJRfbV1u8O1Hh/UO2R2kWht3XNowsCVbE5DV3V9zvMkFrIW',0,12);
 
 insert into event(event_id,date_id,family_id) values (1,26,7);
-insert into event(event_id,date_id,family_id) values (2,27,9);
-insert into event(event_id,date_id,family_id) values (3,28,8);
 
 insert into food(food_id,food) values (1,'main course');
 insert into food(food_id,food) values (2,'red wine');
@@ -256,24 +243,6 @@ insert into food_for_event(event_id,food_id) values (1,6);
 insert into food_for_event(event_id,food_id,on_menu) values (1,7,1);
 insert into food_for_event(event_id,food_id) values (1,8);
 insert into food_for_event(event_id,food_id) values (1,9);
-insert into food_for_event(event_id,food_id) values (2,1);
-insert into food_for_event(event_id,food_id) values (2,2);
-insert into food_for_event(event_id,food_id) values (2,3);
-insert into food_for_event(event_id,food_id) values (2,4);
-insert into food_for_event(event_id,food_id) values (2,5);
-insert into food_for_event(event_id,food_id) values (2,6);
-insert into food_for_event(event_id,food_id) values (2,7);
-insert into food_for_event(event_id,food_id) values (2,8);
-insert into food_for_event(event_id,food_id) values (2,9);
-insert into food_for_event(event_id,food_id) values (3,1);
-insert into food_for_event(event_id,food_id) values (3,2);
-insert into food_for_event(event_id,food_id) values (3,3);
-insert into food_for_event(event_id,food_id) values (3,4);
-insert into food_for_event(event_id,food_id) values (3,5);
-insert into food_for_event(event_id,food_id) values (3,6);
-insert into food_for_event(event_id,food_id) values (3,7);
-insert into food_for_event(event_id,food_id) values (3,8);
-insert into food_for_event(event_id,food_id) values (3,9);
 
 insert into attending(event_id,person_id) values (1,1);
 insert into attending(event_id,person_id) values (1,2);
@@ -299,51 +268,3 @@ insert into attending(event_id,person_id) values (1,21);
 insert into attending(event_id,person_id) values (1,22);
 insert into attending(event_id,person_id) values (1,23);
 insert into attending(event_id,person_id) values (1,24);
-insert into attending(event_id,person_id) values (2,1);
-insert into attending(event_id,person_id) values (2,2);
-insert into attending(event_id,person_id) values (2,3);
-insert into attending(event_id,person_id) values (2,4);
-insert into attending(event_id,person_id) values (2,5);
-insert into attending(event_id,person_id) values (2,6);
-insert into attending(event_id,person_id) values (2,7);
-insert into attending(event_id,person_id) values (2,8);
-insert into attending(event_id,person_id) values (2,9);
-insert into attending(event_id,person_id) values (2,10);
-insert into attending(event_id,person_id) values (2,11);
-insert into attending(event_id,person_id) values (2,12);
-insert into attending(event_id,person_id) values (2,13);
-insert into attending(event_id,person_id) values (2,14);
-insert into attending(event_id,person_id) values (2,15);
-insert into attending(event_id,person_id) values (2,16);
-insert into attending(event_id,person_id) values (2,17);
-insert into attending(event_id,person_id) values (2,18);
-insert into attending(event_id,person_id) values (2,19);
-insert into attending(event_id,person_id) values (2,20);
-insert into attending(event_id,person_id) values (2,21);
-insert into attending(event_id,person_id) values (2,22);
-insert into attending(event_id,person_id) values (2,23);
-insert into attending(event_id,person_id) values (2,24);
-insert into attending(event_id,person_id) values (3,1);
-insert into attending(event_id,person_id) values (3,2);
-insert into attending(event_id,person_id) values (3,3);
-insert into attending(event_id,person_id) values (3,4);
-insert into attending(event_id,person_id) values (3,5);
-insert into attending(event_id,person_id) values (3,6);
-insert into attending(event_id,person_id) values (3,7);
-insert into attending(event_id,person_id) values (3,8);
-insert into attending(event_id,person_id) values (3,9);
-insert into attending(event_id,person_id) values (3,10);
-insert into attending(event_id,person_id) values (3,11);
-insert into attending(event_id,person_id) values (3,12);
-insert into attending(event_id,person_id) values (3,13);
-insert into attending(event_id,person_id) values (3,14);
-insert into attending(event_id,person_id) values (3,15);
-insert into attending(event_id,person_id) values (3,16);
-insert into attending(event_id,person_id) values (3,17);
-insert into attending(event_id,person_id) values (3,18);
-insert into attending(event_id,person_id) values (3,19);
-insert into attending(event_id,person_id) values (3,20);
-insert into attending(event_id,person_id) values (3,21);
-insert into attending(event_id,person_id) values (3,22);
-insert into attending(event_id,person_id) values (3,23);
-insert into attending(event_id,person_id) values (3,24);

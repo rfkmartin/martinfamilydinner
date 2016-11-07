@@ -4,13 +4,13 @@ $_SESSION['SID']=session_id();
 require_once("login.php");
 include("utils.php");
 include("month.php");
+set_timezone();
 include("logger.php");
 include("family.php");
 include("event.php");
 include("body.php");
 process_forms($link);
 print_header();
-set_timezone();
 print_body($link);
 print_footer();
 ?>

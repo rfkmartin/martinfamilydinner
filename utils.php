@@ -77,6 +77,7 @@ function process_forms($link)
 		$myusername = mysqli_real_escape_string($link,$_POST['username']);
 		$mypassword = mysqli_real_escape_string($link,$_POST['password']);
 		$sql = "select user_id,u.family_id,name,is_admin,passcode from user u join family f on u.family_id=f.family_id where username='".$myusername."'";
+		logger($link,$sql);
 		$result = mysqli_query($link,$sql);
 		list($user,$family_id,$family_name,$is_admin,$hashed) = mysqli_fetch_row($result);
 
@@ -87,6 +88,7 @@ function process_forms($link)
 			$_SESSION['is_admin']=$is_admin;
 			$_SESSION['page']="";
 			$sql = "select e.event_id from event e join date d on d.date_id=e.date_id where day!=-1 and str_to_date(concat(concat(month,'/',day),'/',year),'%m/%d/%Y')>curdate() order by year, month limit 1";
+			logger($link,$sql);
 			$result = mysqli_query($link,$sql);
 			if (!empty($result))
 			{
@@ -98,6 +100,7 @@ function process_forms($link)
 				$_SESSION['event_id']=-1;
 			}
 			$sql = "select count(*) from food";
+			logger($link,$sql);
 			$result = mysqli_query($link,$sql);
          list($foods) = mysqli_fetch_row($result);
 			$_SESSION['foods']=$foods;

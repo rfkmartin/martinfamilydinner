@@ -12,7 +12,15 @@ function logger($link,$message)
    {
       $user=$_SESSION['user'];
    }
-   $sql = "insert into logger (msg_dt,session_id,user_id,message) values (now(),\"".$_SESSION['SID']."\",".$user.",\"".mysqli_real_escape_string($link,$message)."\")";
+   if (empty($_SESSION['page']))
+   {
+      $page='empty';
+   }
+   else
+   {
+      $page=$_SESSION['page'];
+   }
+   $sql = 'insert into logger (msg_dt,session_id,page,user_id,message) values (now(),"'.$_SESSION['SID'].'","'.$page.'","'.$user.'","'.mysqli_real_escape_string($link,$message).'")';
    if (mysqli_query($link,$sql))
    {
       //echo ' after logger insert ';
