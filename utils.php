@@ -29,6 +29,7 @@ function print_sub_menu()
       echo ' | <button name="next">Next Event</button>';
       echo ' | <button name="upcoming">Upcoming Events</button>';
       echo ' | <button name="myevent">Manage Your Event</button>';
+      echo ' | <button name="selectevent">Pick Upcoming Schedule</button>';
       if ($_SESSION['is_admin']==1)
       {
          echo '<br>';
@@ -129,6 +130,10 @@ function process_forms($link)
 	if (isset($_POST['myevent']))
 	{
 		$_SESSION['page']='manageev';
+	}
+	if (isset($_POST['selectevent']))
+	{
+		$_SESSION['page']='selectev';
 	}
 }
 ?>

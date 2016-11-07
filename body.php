@@ -63,6 +63,10 @@ function print_body($link)
  	{
       echo print_events($link,'upcoming');
  	}
+ 	elseif ($_SESSION['page']=="selectev")
+ 	{
+      echo select_event($link);
+ 	}
  	echo '    </td>';
  	echo '    <td>';
  	echo draw_calendar($link,date('n'),date('Y'),$SHOW_MONTHS);

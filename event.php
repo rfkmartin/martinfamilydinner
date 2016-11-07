@@ -157,4 +157,15 @@ function add_food_to_event($link)
    	echo '</td></tr></table></form>';
  	}
 }
+// print all upcoming events with food and attendance
+function select_event($link)
+{
+   echo '<h2>Pick your month to host for 2017</h2>';
+   for ($i=0; $i<12;$i++)
+   {
+      echo '<form>';
+      echo '<table border="1"><tr>';
+      echo '<td>Month '.$i.'</td><td>Family drop down</td><td>Select button</td></tr></table></form>';
+   }
+}
 ?>
