@@ -623,7 +623,7 @@ function bringing($link)
    if (isset($_POST['bringingfood']))
    {
       //clear food if changing pick
-      $sql = 'update food_for_event set family_id=null where event_id='.$_SESSION['event_id'].' and family_id='.$_SESSION['family_id'];
+      $sql = 'update food_for_event set family_id=null,notes=null where event_id='.$_SESSION['event_id'].' and family_id='.$_SESSION['family_id'];
       logger($link,$sql);
       if (!mysqli_query($link,$sql))
       {
@@ -632,7 +632,7 @@ function bringing($link)
       $food_id=$_POST['bringing'];
       if ($food_id!=-1)
       {
-         $sql = 'update food_for_event set family_id='.$_SESSION['family_id'].' where food_id='.$food_id.' and event_id='.$_SESSION['event_id'];
+         $sql = 'update food_for_event set family_id='.$_SESSION['family_id'].',notes="'.$_POST['notes'].'" where food_id='.$food_id.' and event_id='.$_SESSION['event_id'];
          logger($link,$sql);
          if (!mysqli_query($link,$sql))
          {
@@ -651,17 +651,18 @@ function bringing($link)
       if ($sum>0)
       {
          echo '<form action = "" method = "post"><table border="1">';
-         $sql = 'select f.food_id,family_id,food from food_for_event ff join food f on ff.food_id=f.food_id where event_id='.$_SESSION['event_id'].' and on_menu=1 and (family_id='.$_SESSION['family_id'].' or family_id is null)';
+         $sql = 'select f.food_id,family_id,food,notes from food_for_event ff join food f on ff.food_id=f.food_id where event_id='.$_SESSION['event_id'].' and on_menu=1 and (family_id='.$_SESSION['family_id'].' or family_id is null)';
          $data = mysqli_query($link,$sql);
          logger($link,$sql);
          $was_checked=0;
-         while (list($food_id,$family_id,$food)=mysqli_fetch_row($data))
+         while (list($food_id,$family_id,$food,$notes)=mysqli_fetch_row($data))
          {
-            $checked='';
+         	$checked='';
             if ($family_id==$_SESSION['family_id'])
             {
                $checked=' checked';
                $was_checked=1;
+               $note=$notes;
             }
             echo '<tr><td><input type="radio" name="bringing" value='.$food_id.$checked.'>'.$food.'</td></tr>';
          }
@@ -671,7 +672,8 @@ function bringing($link)
             $checked=' checked';
          }
          echo '<tr><td><input type="radio" name="bringing" value=-1'.$checked.'>none</td></tr>';
-         echo '<tr><td><input type="submit" name="bringingfood" value="Update"></td></tr></table>';
+         echo '<tr><td>Notes: <input type="text" name="notes" size="25" value="'.$note.'"></td></tr>';
+         echo '<tr><td align="center"><input type="submit" name="bringingfood" value="Update"></td></tr></table>';
          echo '</form>';
       }
    }
@@ -712,7 +714,7 @@ function print_events($link,$type)
       $limit = ' limit 1';
    }
    echo '<h2>'.$title.'</h2>';
-   $sql = "select * from (select e.event_id,f.name,e.family_id,ad.line1,ad.city,ad.state,d.month,d.day,d.year,str_to_date(concat(concat(month,'/',greatest(day,1)),'/',year),'%m/%d/%Y') dt from date d join event e on d.date_id=e.date_id join family f on f.family_id=e.family_id join address ad on ad.address_id=f.address_id".$cancelled.") as a where a.dt".$timearrow."curdate()".$limit;
+   $sql = "select * from (select e.event_id,f.name,e.family_id,ad.line1,ad.city,ad.state,d.month,d.day,d.year,str_to_date(concat(concat(month,'/',greatest(day,1)),'/',year),'%m/%d/%Y') dt from date d join event e on d.date_id=e.date_id join family f on f.family_id=e.family_id join address ad on ad.address_id=f.address_id".$cancelled.") as a where a.dt".$timearrow."curdate()  order by year,month".$limit;
    logger($link,$sql);
    $data = mysqli_query($link,$sql);
    while (list($event_id,$fam_name,$fam_id,$line1,$city,$state,$month,$day,$year,$date)=mysqli_fetch_row($data))
@@ -732,19 +734,24 @@ function print_events($link,$type)
       if ($type!='upcoming')
       {
          echo '<tr><td valign="top" width="50%"><table border="1" width="100%"><tr><td colspan="2" align="center"><b>Dishes</b></td></tr>';
-         $sql1 = 'select food,e.event_id,fa.name from food f left join (select * from food_for_event where event_id='.$event_id.' and on_menu=1) as e on f.food_id=e.food_id left join event ev on e.event_id=ev.event_id left join family fa on fa.family_id=e.family_id order by f.food_id';
+         $sql1 = 'select food,e.event_id,fa.name,e.notes from food f left join (select * from food_for_event where event_id='.$event_id.' and on_menu=1) as e on f.food_id=e.food_id left join event ev on e.event_id=ev.event_id left join family fa on fa.family_id=e.family_id order by f.food_id';
          logger($link,$sql1);
          $data1 = mysqli_query($link,$sql1);
-         while (list($food,$on_menu,$family_name)=mysqli_fetch_row($data1))
+         while (list($food,$on_menu,$family_name,$notes)=mysqli_fetch_row($data1))
          {
             if ($on_menu!="")
             {
-               echo '<tr><td width="67%">';
+               echo '<tr><td width="55%">';
                if ($family_name!="")
                {
                   echo '<b>'.$family_name.'</b>';
                }
-               echo '</td><td>'.$food.'</td></tr>';
+               $note="";
+               if ($notes!="")
+               {
+                  $note='<br><i>&nbsp;&nbsp-'.$notes;
+               }
+               echo '</td><td>'.$food.$note.'</td></tr>';
             }
          }
          echo '</table></td><td valign="top">';

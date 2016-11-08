@@ -27,10 +27,18 @@ function print_body($link)
  	}
  	elseif ($_SESSION['page']=="RSVP")
  	{
+      $sql = 'select day,month,year from date d join event e on d.date_id=e.date_id where event_id='.$_SESSION['event_id'];
+      logger($link,$sql);
+      $data = mysqli_query($link,$sql);
+      if (list($day,$month,$year)=mysqli_fetch_row($data))
+      {
+         // do nothing
+      }
+      echo '<h2>Event on '.date("F", mktime(null, null, null, $month)).' '.$day.', '.$year.'</h2>';
       echo '<table><tr align="center"><td valign="top">';
- 		echo add_attendance($link);
- 		echo '</td><td width="30%"></td><td valign="top">';
- 		echo bringing($link);
+      echo add_attendance($link);
+      echo '</td><td width="30%"></td><td valign="top">';
+      echo bringing($link);
       echo '</td></tr></table>';
  	}
  	elseif ($_SESSION['page']=="managefam")

@@ -47,9 +47,8 @@ function print_logon()
 	}
 	else
 	{
-		print_r($_POST);
 		echo 'Welcome, <span class="person">'.$_SESSION['family_name'].'</span><br>';
-		echo '<form action = "" method = "post"><button name="logout">Logout<button><form>';
+		echo '<form action = "" method = "post"><button name="logout">Logout</button><form>';
 	}
 }
 function print_logon_form()

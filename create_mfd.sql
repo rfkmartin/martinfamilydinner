@@ -87,6 +87,7 @@ create table user (
 create table food_for_event (
    event_id int not null,
    food_id int not null,
+   notes varchar(32),
    on_menu boolean not null default 0,
    family_id int,
    primary key(event_id,food_id),
