@@ -23,9 +23,9 @@ function set_event($link)
 			}
 			else
 			{
-				$eventm=date('m', strtotime($_POST['eday']));
-				$eventY=date('Y', strtotime($_POST['eday']));
-				$eventd=date('d', strtotime($_POST['eday']));
+				$eventm=$_POST['month'];
+				$eventY=$_POST['year'];
+				list($eventd)=explode("-",$_POST['eday']);
 				$e_id=$_POST['e_id'];
 				$family_id=$_SESSION['family_id'];
 				$sql = 'update date d join event e on d.date_id=e.date_id set month='.$eventm.',day='.$eventd.',year='.$eventY.' where e.event_id='.$e_id;
@@ -45,35 +45,33 @@ function set_event($link)
 	}
 	echo '<h2>Edit Event</h2>';
 	echo $error;
-	echo '<table border="1"><tr>';
-	echo '<td width="175px"><b>Family</b></td>';
-	echo '<td width="175px"><b>Tentative Date</b></td>';
-	echo '<td width="175px"><b>Solid Date</b></td>';
-	echo '<td width="100px"></td></tr></table>';
 	$i=0;
 	$sql = "select * from (select e.event_id,f.family_id,f.name,d.month,d.day,d.year,str_to_date(concat(concat(month,'/',greatest(day,1)),'/',year),'%m/%d/%Y') dt from date d join event e on d.date_id=e.date_id join family f on f.family_id=e.family_id where e.cancel=0) as a where a.dt>curdate() and a.family_id=".$_SESSION['family_id'].' limit 1';
 	logger($link,$sql);
 	$data = mysqli_query($link,$sql);
-	while (list($e_id,$family_id,$fam_name,$month,$day,$year,$date)=mysqli_fetch_row($data)) {
-		echo '<form action = "" method = "post">';
+	if (list($e_id,$family_id,$fam_name,$month,$day,$year,$date)=mysqli_fetch_row($data)) {
+	   echo '<table border="1"><tr>';
+	   echo '<td width="175px"><b>Family</b></td>';
+	   echo '<td width="175px"><b>Date</b></td>';
+	   echo '<td width="100px"></td></tr></table>';
+	   echo '<form action = "" method = "post">';
 		echo '<table border="1"><tr>';
 		echo '<td width="175px">'.$fam_name.'</td>';
 		echo '<td width="175px">';
 		if ($day==-1)
 		{
-			echo '<input type="text" id="etdate'.$i.'" name="etday" data-format="YYYY-MM" data-template="MMM YYYY" value="'.$year.'-'.sprintf('%02d',$month).'"></td>';
-			echo '<td width="175px"><input type="text" id="edate'.$i.'" name="eday" data-format="DD-MM-YYYY" data-template="D MMM YYYY" value="'.sprintf('%02d',$day).'-'.sprintf('%02d',$month).'-'.$year.'"></td>';
+			echo date("F", mktime(null, null, null, $month)).' <input type="text" id="edate" name="eday" data-format="DD-MM-YYYY" data-template="DD" value="'.sprintf('%02d',$day).'-'.sprintf('%02d',$month).'-'.$year.'"> '.$year.'</td>';
 		}
 		else
 		{
-			echo '</td>';
-			echo '<td width="175px"><input type="text" id="edate'.$i.'" name="eday" data-format="DD-MM-YYYY" data-template="D MMM YYYY" value="'.sprintf('%02d',$day).'-'.sprintf('%02d',$month).'-'.$year.'"></td>';
+		   echo date("F", mktime(null, null, null, $month)).' <input type="text" id="edate" name="eday" data-format="DD-MM-YYYY" data-template="DD" value="'.sprintf('%02d',$day).'-'.sprintf('%02d',$month).'-'.$year.'"> '.$year.'</td>';
 		}
 		echo '<td width="100px"><input type="hidden" name="e_id" value="'.$e_id.'">';
+		echo '<input type="hidden" name="month" value='.$month.'>';
+		echo '<input type="hidden" name="year" value='.$year.'>';
 		echo '<input type="submit" name="updateevent" value="Update">';
 		echo '</td></tr></table>';
-		echo '<script>$(function(){$(\'#etdate'.$i.'\').combodate({minYear:2016,maxYear:2018});});</script>';
-		echo '<script>$(function(){$(\'#edate'.$i.'\').combodate({minYear:2016,maxYear:2018});});</script>';
+		echo '<script>$(function(){$(\'#edate\').combodate({smartDays:true,minYear:2016,maxYear:2018});});</script>';
 		echo '</form>';
 		$i++;
 	}

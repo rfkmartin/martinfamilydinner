@@ -655,6 +655,7 @@ function bringing($link)
          $data = mysqli_query($link,$sql);
          logger($link,$sql);
          $was_checked=0;
+         $note='';
          while (list($food_id,$family_id,$food,$notes)=mysqli_fetch_row($data))
          {
          	$checked='';
