@@ -137,5 +137,27 @@ function process_forms($link)
 	{
 		$_SESSION['page']='selectev';
 	}
+	// add none option
+	if (isset($_POST['bringingfood']))
+	{
+	   //clear food if changing pick
+	   $sql = 'update food_for_event set family_id=null,notes=null where event_id='.$_SESSION['event_id'].' and family_id='.$_SESSION['family_id'];
+	   logger($link,$sql);
+	   if (!mysqli_query($link,$sql))
+	   {
+	      logger($link,"Error deleting record: " . mysqli_error($link));
+	   }
+	   $food_id=$_POST['bringing'];
+	   if ($food_id!=-1)
+	   {
+	      $sql = 'update food_for_event set family_id='.$_SESSION['family_id'].',notes="'.$_POST['notes'].'" where food_id='.$food_id.' and event_id='.$_SESSION['event_id'];
+	      logger($link,$sql);
+	      if (!mysqli_query($link,$sql))
+	      {
+	         logger($link,"Error inserting record: " . mysqli_error($link));
+	      }
+	   }
+	   $_SESSION['page']="next";
+	}
 }
 ?>
