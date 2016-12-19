@@ -558,40 +558,6 @@ function add_food($link)
 // print current family members and select for attending selected event
 function add_attendance($link)
 {
-   if (isset($_POST['addpersonevent']))
-   {
-      $personArray = [];
-      if (isset($_POST['persons']))
-      {
-         $personArray = $_POST['persons'];
-      }
-      $j=0;
-      $sql = 'select person_id from person p join family f on p.family_id=f.family_id where f.family_id='.$_SESSION['family_id'];
-      logger($link,$sql);
-      $data = mysqli_query($link,$sql);
-      while (list($person_id)=mysqli_fetch_row($data))
-      {
-         if ($j<count($personArray)&&$personArray[$j]==$person_id)
-         {
-            $sql = "update attending set coming=1 where event_id=".$_SESSION['event_id']." and person_id=".$person_id;
-            logger($link,$sql);
-            if (!mysqli_query($link,$sql))
-            {
-               logger($link,"Error inserting record: " . mysqli_error($link));
-            }
-            $j++;
-         }
-         else
-         {
-            $sql = "update attending set coming=0 where event_id=".$_SESSION['event_id']." and person_id=".$person_id;
-            logger($link,$sql);
-            if (!mysqli_query($link,$sql))
-            {
-               logger($link,"Error inserting record: " . mysqli_error($link));
-            }
-         }
-      }
-   }
    echo '<h2>Attending</h2>';
    if (!empty($_SESSION['family_id'])&&!empty($_SESSION['event_id']))
    {
@@ -619,29 +585,6 @@ function add_attendance($link)
 // print unselected foods for event
 function bringing($link)
 {
-   // add none option
-//    if (isset($_POST['bringingfood']))
-//    {
-//       //clear food if changing pick
-//       $sql = 'update food_for_event set family_id=null,notes=null where event_id='.$_SESSION['event_id'].' and family_id='.$_SESSION['family_id'];
-//       logger($link,$sql);
-//       if (!mysqli_query($link,$sql))
-//       {
-//          logger($link,"Error deleting record: " . mysqli_error($link));
-//       }
-//       $food_id=$_POST['bringing'];
-//       if ($food_id!=-1)
-//       {
-//          $sql = 'update food_for_event set family_id='.$_SESSION['family_id'].',notes="'.$_POST['notes'].'" where food_id='.$food_id.' and event_id='.$_SESSION['event_id'];
-//          logger($link,$sql);
-//          if (!mysqli_query($link,$sql))
-//          {
-//             logger($link,"Error inserting record: " . mysqli_error($link));
-//          }
-//       }
-//       $_SESSION['page']=="next";
-//       print_body($link);
-//    }
    echo '<h2>Bringing</h2>';
    if (!empty($_SESSION['family_id'])&&!empty($_SESSION['event_id']))
    {

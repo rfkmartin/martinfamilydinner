@@ -48,7 +48,8 @@ function print_logon()
 	else
 	{
 		echo 'Welcome, <span class="person">'.$_SESSION['family_name'].'</span><br>';
-		echo '<form action = "" method = "post"><button name="logout">Logout</button><form>';
+		echo '<form action = "" method = "post"><button name="account">My Account</button><br>';
+		echo '<button name="logout">Logout</button><form>';
 	}
 }
 function print_logon_form()
@@ -109,6 +110,44 @@ function process_forms($link)
 			$error = "Your Login Name or Password is invalid";
 		}
 	}
+	if (isset($_POST['addpersonevent']))
+    {
+       $personArray = [];
+       if (isset($_POST['persons']))
+       {
+          $personArray = $_POST['persons'];
+       }
+       $j=0;
+       $sql = 'select person_id from person p join family f on p.family_id=f.family_id where f.family_id='.$_SESSION['family_id'];
+       logger($link,$sql);
+       $data = mysqli_query($link,$sql);
+       while (list($person_id)=mysqli_fetch_row($data))
+       {
+          if ($j<count($personArray)&&$personArray[$j]==$person_id)
+          {
+             $sql = "update attending set coming=1 where event_id=".$_SESSION['event_id']." and person_id=".$person_id;
+             logger($link,$sql);
+             if (!mysqli_query($link,$sql))
+             {
+                logger($link,"Error inserting record: " . mysqli_error($link));
+             }
+             $j++;
+          }
+          else
+          {
+             $sql = "update attending set coming=0 where event_id=".$_SESSION['event_id']." and person_id=".$person_id;
+             logger($link,$sql);
+             if (!mysqli_query($link,$sql))
+             {
+                logger($link,"Error inserting record: " . mysqli_error($link));
+             }
+          }
+       }
+    }
+    if (isset($_POST['account']))
+    {
+       $_SESSION['page']='account';
+    }
 	if (isset($_POST['rsvp']))
 	{
 		$_SESSION['page']='RSVP';
@@ -157,7 +196,6 @@ function process_forms($link)
 	         logger($link,"Error inserting record: " . mysqli_error($link));
 	      }
 	   }
-	   $_SESSION['page']="next";
 	}
 }
 ?>
