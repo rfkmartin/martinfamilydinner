@@ -43,7 +43,7 @@ function set_event($link)
 			}
 		}
 	}
-	echo '<h2>Edit Event</h2>';
+	echo '<h2>Edit Event Date</h2>';
 	echo $error;
 	$i=0;
 	$sql = "select * from (select e.event_id,f.family_id,f.name,d.month,d.day,d.year,str_to_date(concat(concat(month,'/',greatest(day,1)),'/',year),'%m/%d/%Y') dt from date d join event e on d.date_id=e.date_id join family f on f.family_id=e.family_id where e.cancel=0) as a where a.dt>curdate() and a.family_id=".$_SESSION['family_id'].' limit 1';

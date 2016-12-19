@@ -632,13 +632,23 @@ function print_events($link,$type)
       $title='Next Event';
       $timearrow='>=';
       $cancelled=' where e.cancel=0';
+      $family='';
       $limit = ' limit 1';
    }
-   if ($type=='upcoming')
+   if ($type=='nextfam')
+   {
+   	$title=$_SESSION['family_name'].' Next Event';
+   	$timearrow='>=';
+   	$cancelled=' where e.cancel=0';
+   	$family=" and f.family_id=".$_SESSION['family_id'];
+   	$limit = ' limit 1';
+   }
+    if ($type=='upcoming')
    {
       $title='Upcoming Events';
       $timearrow='>=';
       $cancelled=' where e.cancel=0';
+      $family='';
       $limit = '';
    }
    elseif ($type=='cancelled')
@@ -646,6 +656,7 @@ function print_events($link,$type)
       $title='Cancelled Events';
       $timearrow='>';
       $cancelled=' where e.cancel=1';
+      $family='';
       $limit = '';
    }
    elseif ($type=='past')
@@ -653,6 +664,7 @@ function print_events($link,$type)
       $title='Past Events';
       $timearrow='<';
       $cancelled='';
+      $family='';
       $limit = '';
    }
    if (empty($_SESSION['user']))
@@ -660,7 +672,7 @@ function print_events($link,$type)
       $limit = ' limit 1';
    }
    echo '<h2>'.$title.'</h2>';
-   $sql = "select * from (select e.event_id,f.name,e.family_id,ad.line1,ad.city,ad.state,d.month,d.day,d.year,str_to_date(concat(concat(month,'/',greatest(day,1)),'/',year),'%m/%d/%Y') dt from date d join event e on d.date_id=e.date_id join family f on f.family_id=e.family_id join address ad on ad.address_id=f.address_id".$cancelled.") as a where a.dt".$timearrow."curdate()  order by year,month".$limit;
+   $sql = "select * from (select e.event_id,f.name,e.family_id,ad.line1,ad.city,ad.state,d.month,d.day,d.year,str_to_date(concat(concat(month,'/',greatest(day,1)),'/',year),'%m/%d/%Y') dt from date d join event e on d.date_id=e.date_id join family f on f.family_id=e.family_id join address ad on ad.address_id=f.address_id".$cancelled.$family.") as a where a.dt".$timearrow."curdate() order by year,month".$limit;
    logger($link,$sql);
    $data = mysqli_query($link,$sql);
    while (list($event_id,$fam_name,$fam_id,$line1,$city,$state,$month,$day,$year,$date)=mysqli_fetch_row($data))

@@ -155,7 +155,7 @@ insert into date(date_id,day,month,year) values (22,15,7,2010); -- Stevie
 insert into date(date_id,day,month,year) values (23,18,7,2013); -- Bobby
 insert into date(date_id,day,month,year) values (24,18,7,2013); -- Teddy
 insert into date(date_id,day,month,year) values (25,19,5,2007); -- Martinopoulos
-insert into date(date_id,day,month,year) values (26,29,11,2016); -- Martinopoulos 5/16 dinner
+insert into date(date_id,day,month,year) values (26,17,1,2017); -- Martinopoulos 5/16 dinner
 
 -- Sarah
 insert into family(family_id,name,address_id,phone,anniversary_id) values (1,'Arendt(Mendota Hts)',1,NULL,NULL);

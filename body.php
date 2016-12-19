@@ -43,16 +43,17 @@ function print_body($link)
  		echo '</td></tr></table>';
  	}
  	elseif ($_SESSION['page']=="manageev")
- 	{
+   {
       $sql = "select * from (select e.event_id,f.family_id,f.name,d.month,d.day,d.year,str_to_date(concat(concat(month,'/',greatest(day,1)),'/',year),'%m/%d/%Y') dt from date d join event e on d.date_id=e.date_id join family f on f.family_id=e.family_id where e.cancel=0) as a where a.dt>curdate() and a.family_id=".$_SESSION['family_id'].' limit 1';
- 		logger($link,$sql);
- 		$data = mysqli_query($link,$sql);
- 		if (mysqli_num_rows($data)<1)
- 		{
- 			echo '<h3>You have no upcoming events</h3>';
- 		}
- 		else
- 		{
+      logger($link,$sql);
+      $data = mysqli_query($link,$sql);
+      if (mysqli_num_rows($data)<1)
+      {
+         echo '<h3>You have no upcoming events</h3>';
+      }
+      else
+      {
+         echo print_events($link,'nextfam');
          echo '<table><tr align="center"><td>';
          echo set_event($link);
          echo '</td></tr><tr><td align="center">';
