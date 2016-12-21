@@ -69,6 +69,10 @@ function print_body($link)
  	{
       echo select_event($link);
  	}
+ 	elseif ($_SESSION['page']=="account")
+ 	{
+      echo update_account($link);
+ 	}
  	echo '    </td>';
  	echo '    <td>';
  	echo draw_calendar($link,date('n'),date('Y'),$SHOW_MONTHS);

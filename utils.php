@@ -60,6 +60,27 @@ function print_logon_form()
 	//echo 'Welcome, <span class="person">Nobody</span><br>';
 	echo '<input type="submit" name="login" value="Log In"><form>';
 }
+function update_account($link)
+{
+	echo '<h2>Update Username</h2>';
+	echo '<form action = "" method = "post">';
+	echo '<table border="0"><tr>';
+	echo '<td width="175px"><b>New Username</b></td>';
+	echo '<td width="175px"><input type="text" name="username" size="45" value="'.$_SESSION['username'].'"></td>';
+	echo '</tr></table>';
+	echo '<input type="submit" name="updateusername" value="Update">';
+	echo '<h2>Update Password</h2>';
+	echo '<form action = "" method = "post">';
+	echo '<table border="0"><tr>';
+	echo '<td width="200px"><b>Old Password</b></td>';
+	echo '<td width="200px"><input type="text" name="orig_pwd" size="45"></td></tr>';
+	echo '<tr><td width="200px"><b>New Password</b></td>';
+	echo '<td width="200px"><input type="text" name="new_pwd" size="45"></td></tr>';
+	echo '<tr><td width="200px"><b>New Password Again</b></td>';
+	echo '<td width="200px"><input type="text" name="new_pwd1" size="45"></td></tr>';
+	echo '</tr></table>';
+	echo '<input type="submit" name="updatepassword" value="Update">';
+}
 function process_forms($link)
 {
 	if (isset($_POST['logout']))
@@ -82,6 +103,7 @@ function process_forms($link)
 		list($user,$family_id,$family_name,$is_admin,$hashed) = mysqli_fetch_row($result);
 
 		if(password_verify($mypassword,$hashed)) {
+			$_SESSION['username']=$_POST['username'];
 			$_SESSION['user']=$user;
 			$_SESSION['family_id']=$family_id;
 			$_SESSION['family_name']=$family_name;
