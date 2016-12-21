@@ -62,6 +62,7 @@ function print_logon_form()
 }
 function update_account($link)
 {
+   echo '<h3><font color="red">'.$_SESSION['error'].'</font>'.$_SESSION['message'].'</h3>';
 	echo '<h2>Update Username</h2>';
 	echo '<form action = "" method = "post">';
 	echo '<table border="0"><tr>';
@@ -109,7 +110,9 @@ function process_forms($link)
 			$_SESSION['family_name']=$family_name;
 			$_SESSION['is_admin']=$is_admin;
 			$_SESSION['page']="";
-			$sql = "select e.event_id from event e join date d on d.date_id=e.date_id where day!=-1 and str_to_date(concat(concat(month,'/',day),'/',year),'%m/%d/%Y')>curdate() order by year, month limit 1";
+			$_SESSION['error']="";
+			$_SESSION['message']="";
+				$sql = "select e.event_id from event e join date d on d.date_id=e.date_id where day!=-1 and str_to_date(concat(concat(month,'/',day),'/',year),'%m/%d/%Y')>curdate() order by year, month limit 1";
 			logger($link,$sql);
 			$result = mysqli_query($link,$sql);
 			if (!empty($result))
@@ -165,6 +168,66 @@ function process_forms($link)
              }
           }
        }
+    }
+    if (isset($_POST['updateusername']))
+    {
+       $_SESSION['error']='';
+       $_SESSION['message']='';
+        // check for duplicate username
+       $sql = 'select * from user u where u.username="'.$_POST['username'].'"';
+       logger($link,$sql);
+       $data = mysqli_query($link,$sql);
+       if (mysqli_num_rows($data)>0)
+       {
+          $_SESSION['error']='Username already taken';
+          return;
+       }
+       // change username
+       $sql = 'update user set username="'.$_POST['username'].'" where user_id='.$_SESSION['user'];
+       logger($link,$sql);
+       $data = mysqli_query($link,$sql);
+       if (!mysqli_query($link,$sql))
+       {
+          logger($link,"Error updating record: " . mysqli_error($link));
+       }
+       $_SESSION['message']='Username successfully changed';
+       $_SESSION['username']=$_POST['username'];
+    }
+    if (isset($_POST['updatepassword']))
+    {
+       $_SESSION['error']='';
+       $_SESSION['message']='';
+        // check for matching password old
+       $sql = "select passcode from user where username='".$_SESSION['username']."'";
+       logger($link,$sql);
+       $result = mysqli_query($link,$sql);
+       list($hashed) = mysqli_fetch_row($result);
+       
+       if(!password_verify(mysqli_real_escape_string($link,$_POST['orig_pwd']),$hashed))
+       {
+          $_SESSION['error']='Old password does not match';
+          return;
+       }
+       if ($_POST['new_pwd']=="")
+       {
+          $_SESSION['error']='New password cannot be blank';
+          return;
+       }
+       // check for matching new passwords
+       if (mysqli_real_escape_string($link,$_POST['new_pwd']) != mysqli_real_escape_string($link,$_POST['new_pwd1']))
+       {
+          $_SESSION['error']='New passwords do not match';
+          return;          
+       }
+       // change password
+       $sql = 'update user set passcode="'.password_hash($_POST['new_pwd1'],PASSWORD_DEFAULT).'" where user_id='.$_SESSION['user'];
+       logger($link,$sql);
+       $data = mysqli_query($link,$sql);
+       if (!mysqli_query($link,$sql))
+       {
+          logger($link,"Error updating record: " . mysqli_error($link));
+       }
+       $_SESSION['message']='Password successfully updated';
     }
     if (isset($_POST['account']))
     {
