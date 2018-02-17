@@ -112,7 +112,7 @@ function process_forms($link)
 			$_SESSION['page']="";
 			$_SESSION['error']="";
 			$_SESSION['message']="";
-				$sql = "select e.event_id from event e join date d on d.date_id=e.date_id where day!=-1 and str_to_date(concat(concat(month,'/',day),'/',year),'%m/%d/%Y')>curdate() order by year, month limit 1";
+				$sql = "select e.event_id from event e join date d on d.date_id=e.date_id where day!=-1 and str_to_date(concat(concat(month,'/',day),'/',year),'%m/%d/%Y')>=curdate() order by year, month limit 1";
 			logger($link,$sql);
 			$result = mysqli_query($link,$sql);
 			if (!empty($result))
